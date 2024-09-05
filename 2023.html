@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        img {
+            width: 300px;
+            height: auto;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Gallery</h1>
+    <div id="gallery"></div>
+
+    <script>
+        // 이미지 파일 배열 (이미지를 저장소에서 가져옵니다)
+        const images = [
+            '20240514_203327.jpg', 
+            '20240629_183536.jpg', 
+            // 여기에 추가적인 이미지 파일 이름을 넣습니다
+        ];
+
+        // 이미지를 웹페이지에 표시하는 코드
+        const gallery = document.getElementById('gallery');
+        images.forEach(image => {
+            const imgElement = document.createElement('img');
+            imgElement.src = `./${image}`;  // 저장소 루트에서 이미지를 가져옴
+            gallery.appendChild(imgElement);
+        });
+    </script>
+</body>
+</html>
