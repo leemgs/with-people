@@ -19,9 +19,19 @@
     <script>
         // 이미지 파일 배열 (이미지를 저장소에서 가져옵니다)
         const images = [
-            '20240514_203327.jpg', 
-            '20240629_183536.jpg', 
-            // 여기에 추가적인 이미지 파일 이름을 넣습니다
+            '20230331_220354.jpg',
+            '20230513_191803.jpg',
+            '20230603_165925.jpg',
+            '20230605_182950.jpg',
+            '20230605_194137.jpg',
+            '20230605_212401.jpg',
+            '20230617_194518.jpg',
+            '20230623_185653.jpg',
+            '20230624_135206.jpg',
+            '20230923_101513.jpg',
+            '20230923_101535.jpg',
+            '20231028_204557.jpg',
+            '20231215_182956.jpg'
         ];
 
         // 이미지를 웹페이지에 표시하는 코드
@@ -30,6 +40,10 @@
             const imgElement = document.createElement('img');
             imgElement.src = `./${image}`;  // 저장소 루트에서 이미지를 가져옴
             gallery.appendChild(imgElement);
+
+            // 줄 바꿈 추가
+            const brElement = document.createElement('br');
+            gallery.appendChild(brElement);
         });
     </script>
 </body>
