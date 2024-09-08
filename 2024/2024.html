@@ -9,11 +9,12 @@
             width: 300px;
             height: auto;
             margin: 10px;
+            cursor: pointer; /* 클릭할 수 있도록 포인터 모양 변경 */
         }
     </style>
 </head>
 <body>
-    <h1>Image Gallery</h1>
+    <h1>Image Gallery (2024)</h1>
     <div id="gallery"></div>
 
     <script>
@@ -33,8 +34,19 @@
         images.forEach(image => {
             const imgElement = document.createElement('img');
             imgElement.src = `./${image}`;  // 저장소 루트에서 이미지를 가져옴
+            imgElement.alt = image;  // 이미지 파일명을 alt로 사용
+            imgElement.addEventListener('click', () => {
+                openImageInPopup(`./${image}`);
+            });
             gallery.appendChild(imgElement);
         });
+
+        // 이미지를 팝업창에 원본 크기로 여는 함수
+        function openImageInPopup(src) {
+            const imagePopup = window.open("", "_blank");
+            imagePopup.document.write(`<img src="${src}" style="width:100%;height:auto;">`);
+            imagePopup.document.title = "원본 이미지";
+        }
     </script>
 </body>
 </html>
