@@ -45,7 +45,7 @@
         function openImageInPopup(src) {
             const imagePopup = window.open("", "_blank");
             imagePopup.document.write(`<img src="${src}" style="width:100%;height:auto;">`);
-            imagePopup.document.title = "원본 이미지";
+            imagePopup.document.title = "${src}";
         }
     </script>
 </body>
