@@ -5,17 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery (2024)</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        #gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
         img {
-            width: 300px;
+            width: 100%;
             height: auto;
-            margin: 10px;
-            cursor: pointer; /* 클릭할 수 있도록 포인터 모양 변경 */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 팝업창에서 큰 이미지가 표시될 때 창 크기를 제한하는 스타일 */
+        img.fullscreen {
+            max-width: 100%;
+            max-height: 100%;
         }
     </style>
 </head>
 <body>
-    <h1>Image Gallery (2024)</h1>
-    <div id="gallery"></div>
+    <div>
+        <h1>Image Gallery (2024)</h1>
+        <div id="gallery"></div>
+    </div>
 
     <script>
         // input.txt 파일을 읽어서 이미지를 표시하는 함수
@@ -47,8 +86,8 @@
         // 이미지를 팝업창에 원본 크기로 여는 함수
         function openImageInPopup(src) {
             const imagePopup = window.open("", "_blank");
-            imagePopup.document.write(`<img src="${src}" style="width:100%;height:auto;">`);
-            imagePopup.document.title = src;
+            imagePopup.document.write(`<img src="${src}" class="fullscreen">`);
+            imagePopup.document.title = "Original Image: " + src;
         }
 
         // 페이지가 로드되면 이미지 로드 함수 호출
