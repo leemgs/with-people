@@ -12,6 +12,8 @@
             padding: 20px;
             display: flex;
             justify-content: center;
+            flex-direction: column;
+            align-items: center;
         }
 
         h1 {
@@ -43,20 +45,49 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
-        /* 팝업창에서 큰 이미지가 표시될 때 창 크기를 제한하는 스타일 */
-        img.fullscreen {
-            max-width: 100%;
-            max-height: 100%;
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination button:hover {
+            background-color: #555;
+        }
+
+        .pagination button:disabled {
+            background-color: #bbb;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-    <div>
-        <h1>Image Gallery (2024)</h1>
-        <div id="gallery"></div>
+    <h1>Image Gallery (2024)</h1>
+    <div id="gallery"></div>
+
+    <!-- 페이지네이션 버튼 -->
+    <div class="pagination">
+        <button id="prevBtn" onclick="changePage(-1)" disabled>Previous</button>
+        <button id="nextBtn" onclick="changePage(1)">Next</button>
     </div>
 
     <script>
+        let images = [];  // 이미지 목록
+        let currentPage = 1;  // 현재 페이지
+        const imagesPerPage = 3;  // 페이지당 표시할 이미지 수
+
         // input.txt 파일을 읽어서 이미지를 표시하는 함수
         async function loadImages() {
             try {
@@ -65,29 +96,51 @@
                 const text = await response.text();
                 
                 // 텍스트 파일에서 이미지 파일 이름을 배열로 변환 (줄바꿈 기준)
-                const images = text.split('\n').filter(line => line.trim() !== '');
+                images = text.split('\n').filter(line => line.trim() !== '');
                 
-                // 갤러리 영역에 이미지를 추가하는 코드
-                const gallery = document.getElementById('gallery');
-                images.forEach(image => {
-                    const imgElement = document.createElement('img');
-                    imgElement.src = `./${image.trim()}`;  // 이미지 파일을 경로에서 가져옴
-                    imgElement.alt = image.trim();  // 이미지 파일명을 alt로 사용
-                    imgElement.addEventListener('click', () => {
-                        openImageInPopup(`./${image.trim()}`);
-                    });
-                    gallery.appendChild(imgElement);
-                });
+                // 첫 페이지 로드
+                displayImages();
             } catch (error) {
                 console.error('Error loading images:', error);
             }
         }
 
+        // 현재 페이지에 해당하는 이미지를 표시하는 함수
+        function displayImages() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';  // 기존 이미지를 모두 지움
+
+            // 현재 페이지의 이미지 인덱스 범위 계산
+            const startIndex = (currentPage - 1) * imagesPerPage;
+            const endIndex = Math.min(startIndex + imagesPerPage, images.length);
+
+            // 해당 범위의 이미지를 갤러리에 추가
+            for (let i = startIndex; i < endIndex; i++) {
+                const imgElement = document.createElement('img');
+                imgElement.src = `./${images[i].trim()}`;
+                imgElement.alt = images[i].trim();
+                imgElement.addEventListener('click', () => {
+                    openImageInPopup(`./${images[i].trim()}`);
+                });
+                gallery.appendChild(imgElement);
+            }
+
+            // 버튼 상태 업데이트
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = endIndex >= images.length;
+        }
+
         // 이미지를 팝업창에 원본 크기로 여는 함수
         function openImageInPopup(src) {
             const imagePopup = window.open("", "_blank");
-            imagePopup.document.write(`<img src="${src}" class="fullscreen">`);
+            imagePopup.document.write(`<img src="${src}" style="width:100%;height:auto;">`);
             imagePopup.document.title = "Original Image: " + src;
+        }
+
+        // 페이지를 변경하는 함수
+        function changePage(direction) {
+            currentPage += direction;
+            displayImages();
         }
 
         // 페이지가 로드되면 이미지 로드 함수 호출
