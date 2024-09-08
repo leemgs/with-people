@@ -18,35 +18,41 @@
     <div id="gallery"></div>
 
     <script>
-        // 이미지 파일 배열 (이미지를 저장소에서 가져옵니다)
-        const images = [
-            '20240514_203327.jpg', 
-            '20240629_183536.jpg', 
-            '20240704_847809.jpg', 
-            '20240806_124029.jpg', 
-            '20240903_134047.jpg', 
-            '20240905_202018.jpg',
-            // 여기에 추가적인 이미지 파일 이름을 넣습니다
-        ];
-
-        // 이미지를 웹페이지에 표시하는 코드
-        const gallery = document.getElementById('gallery');
-        images.forEach(image => {
-            const imgElement = document.createElement('img');
-            imgElement.src = `./${image}`;  // 저장소 루트에서 이미지를 가져옴
-            imgElement.alt = image;  // 이미지 파일명을 alt로 사용
-            imgElement.addEventListener('click', () => {
-                openImageInPopup(`./${image}`);
-            });
-            gallery.appendChild(imgElement);
-        });
+        // input.txt 파일을 읽어서 이미지를 표시하는 함수
+        async function loadImages() {
+            try {
+                // input.txt 파일을 가져옴
+                const response = await fetch('input.txt');
+                const text = await response.text();
+                
+                // 텍스트 파일에서 이미지 파일 이름을 배열로 변환 (줄바꿈 기준)
+                const images = text.split('\n').filter(line => line.trim() !== '');
+                
+                // 갤러리 영역에 이미지를 추가하는 코드
+                const gallery = document.getElementById('gallery');
+                images.forEach(image => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `./${image.trim()}`;  // 이미지 파일을 경로에서 가져옴
+                    imgElement.alt = image.trim();  // 이미지 파일명을 alt로 사용
+                    imgElement.addEventListener('click', () => {
+                        openImageInPopup(`./${image.trim()}`);
+                    });
+                    gallery.appendChild(imgElement);
+                });
+            } catch (error) {
+                console.error('Error loading images:', error);
+            }
+        }
 
         // 이미지를 팝업창에 원본 크기로 여는 함수
         function openImageInPopup(src) {
             const imagePopup = window.open("", "_blank");
             imagePopup.document.write(`<img src="${src}" style="width:100%;height:auto;">`);
-            imagePopup.document.title = "${src}";
+            imagePopup.document.title = src;
         }
+
+        // 페이지가 로드되면 이미지 로드 함수 호출
+        window.onload = loadImages;
     </script>
 </body>
 </html>
