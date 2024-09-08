@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery (2023)</title>
+    <title>Image Gallery (2024)</title>
     <style>
         img {
             width: 300px;
             height: auto;
             margin: 10px;
+            cursor: pointer; /* 클릭할 수 있도록 포인터 모양 변경 */
         }
     </style>
 </head>
 <body>
-    <h1>Image Gallery</h1>
+    <h1>Image Gallery (2024)</h1>
     <div id="gallery"></div>
 
     <script>
@@ -32,6 +33,7 @@
             '20230923_101535.jpg',
             '20231028_204557.jpg',
             '20231215_182956.jpg'
+            // 여기에 추가적인 이미지 파일 이름을 넣습니다
         ];
 
         // 이미지를 웹페이지에 표시하는 코드
@@ -39,12 +41,19 @@
         images.forEach(image => {
             const imgElement = document.createElement('img');
             imgElement.src = `./${image}`;  // 저장소 루트에서 이미지를 가져옴
+            imgElement.alt = image;  // 이미지 파일명을 alt로 사용
+            imgElement.addEventListener('click', () => {
+                openImageInPopup(`./${image}`);
+            });
             gallery.appendChild(imgElement);
-
-            // 줄 바꿈 추가
-            const brElement = document.createElement('br');
-            gallery.appendChild(brElement);
         });
+
+        // 이미지를 팝업창에 원본 크기로 여는 함수
+        function openImageInPopup(src) {
+            const imagePopup = window.open("", "_blank");
+            imagePopup.document.write(`<img src="${src}" style="width:100%;height:auto;">`);
+            imagePopup.document.title = "${src}";
+        }
     </script>
 </body>
 </html>
