@@ -1,0 +1,56 @@
+name: Merge Input Generate
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  generate-input:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Get merged files
+      id: merged-files
+      run: |
+        BASE_SHA=${{ github.event.pull_request.base.sha }}
+        HEAD_SHA=${{ github.event.pull_request.head.sha }}
+        MERGED_FILES=$(git diff --name-only $BASE_SHA $HEAD_SHA)
+        echo "MERGED_FILES<<EOF" >> $GITHUB_ENV
+        echo "$MERGED_FILES" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - name: Run input_generate.py for affected years
+      run: |
+        affected_years=()
+        while IFS= read -r file; do
+          year=$(echo $file | cut -d'/' -f1)
+          if [[ $year =~ ^[0-9]{4}$ ]]; then
+            if [[ ! " ${affected_years[@]} " =~ " ${year} " ]]; then
+              affected_years+=($year)
+            fi
+          fi
+        done <<< "$MERGED_FILES"
+        
+        for year in "${affected_years[@]}"; do
+          echo "Running input_generate.py for year $year"
+          python3 ./input_generate.py $year
+        done
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "leemgs@gmail.com"
+        git config --local user.name "Geunsik Lim"
+        git add .
+        git commit -m "Update input.txt files after PR merge" || echo "No changes to commit"
+        git push
