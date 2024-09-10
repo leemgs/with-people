@@ -11,7 +11,7 @@ year_dir=$1
 
 echo -e "[DEBUG]### Fetching change from the GitHub repo..."
 git pull
-cd ./year_dir/
+cd $year_dir
 ls -1 *.jpg > ./input.txt
 echo -e "[DEBUG]### The input.txt file is generated as follows."
 pwd
