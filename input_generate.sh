@@ -11,9 +11,10 @@ year_dir=$1
 
 echo -e "[DEBUG]### Fetching change from the GitHub repo..."
 git pull
-cd ./wor_folder/
+cd ./year_dir/
 ls -1 *.jpg > ./input.txt
 echo -e "[DEBUG]### The input.txt file is generated as follows."
+pwd
 cat ./input.txt
 echo -e "[DEBUG]### Commiting new changes ..........."
 git add . 
