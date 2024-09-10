@@ -43,6 +43,8 @@ if __name__ == "__main__":
         print(f.read())
 
     print("[DEBUG]### Commiting new changes ...........")
+    run_command("git config --global user.email 'leemgs@gmail.com'")
+    run_command("git config --global user.name 'Geunsik Lim'")
     run_command("git add .")
     run_command('git commit -a -s -m "added input.txt for image gallery"')
 
