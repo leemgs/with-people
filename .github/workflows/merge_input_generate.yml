@@ -50,7 +50,7 @@ jobs:
     - name: Commit changes
       run: |
         git config --global user.email "leemgs@gmail.com"
-        git config --glibal user.name "Geunsik Lim"
+        git config --global user.name "Geunsik Lim"
         git add .
         git commit -m "Update input.txt files after PR merge" || echo "No changes to commit"
         git push
