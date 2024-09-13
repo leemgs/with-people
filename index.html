@@ -40,6 +40,7 @@
             font-size: 1em;
             cursor: pointer;
         }
+        body { text-align: center; }
     </style>
 </head>
 <body>
@@ -65,7 +66,7 @@
     <script>
         const startYear = 1975;
         const currentYear = new Date().getFullYear();
-        const yearsPerPage = 20;
+        const yearsPerPage = 10;
         let currentPage = 1;
 
         function checkFolderExists(year) {
@@ -107,7 +108,7 @@
                 });
 
                 document.getElementById('prevBtn').disabled = page === 1;
-                document.getElementById('nextBtn').disabled = (currentYear - start) <= startYear;
+                document.getElementById('nextBtn').disabled = end >= (currentYear - startYear + 1);
             });
         }
 
