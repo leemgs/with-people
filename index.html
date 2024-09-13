@@ -71,7 +71,7 @@
         let yearsData = [];
 
         function checkFolderExists(year) {
-            return fetch(`./${year}/`)
+            return fetch(`./${year}/input.txt`)
                 .then(response => {
                     if (response.status === 404) {
                         return false;
