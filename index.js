@@ -1,4 +1,4 @@
-const startYear = 1990;
+const startYear = 2000;
 const currentYear = new Date().getFullYear();
 const yearsPerPage = 10;
 let currentPage = 1;
