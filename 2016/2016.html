@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery (2016)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        #gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .pagination button:hover {
+            background-color: #555;
+        }
+
+        .pagination button:disabled {
+            background-color: #bbb;
+            cursor: not-allowed;
+        }
+
+        /* Home 버튼 스타일 */
+        .home-menu {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .home-menu a {
+            text-decoration: none;
+            font-size: 1.2em;
+            color: #333;
+            background-color: #ddd;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-menu a:hover {
+            background-color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Home 메뉴 추가 -->
+    <div class="home-menu">
+        <a href="https://leemgs.github.io/with-people/" target="_blank">Home</a>
+    </div>
+
+    <h1>Image Gallery (2016)</h1>
+    <div id="gallery"></div>
+
+    <!-- 페이지네이션 버튼 -->
+    <div class="pagination">
+        <button id="prevBtn" onclick="changePage(-1)" disabled>Previous</button>
+        <button id="nextBtn" onclick="changePage(1)">Next</button>
+    </div>
+
+    <script>
+        let images = [];  // 이미지 목록
+        let currentPage = 1;  // 현재 페이지
+        const imagesPerPage = 10;  // 페이지당 표시할 이미지 수
+
+        // input.txt 파일을 읽어서 이미지를 표시하는 함수
+        async function loadImages() {
+            try {
+                // input.txt 파일을 가져옴
+                const response = await fetch('input.txt');
+                const text = await response.text();
+                
+                // 텍스트 파일에서 이미지 파일 이름을 배열로 변환 (줄바꿈 기준)
+                images = text.split('\n').filter(line => line.trim() !== '');
+                
+                // 첫 페이지 로드
+                displayImages();
+            } catch (error) {
+                console.error('Error loading images:', error);
+            }
+        }
+
+        // 현재 페이지에 해당하는 이미지를 표시하는 함수
+        function displayImages() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';  // 기존 이미지를 모두 지움
+
+            // 현재 페이지의 이미지 인덱스 범위 계산
+            const startIndex = (currentPage - 1) * imagesPerPage;
+            const endIndex = Math.min(startIndex + imagesPerPage, images.length);
+
+            // 해당 범위의 이미지를 갤러리에 추가
+            for (let i = startIndex; i < endIndex; i++) {
+                const imgElement = document.createElement('img');
+                imgElement.src = `./${images[i].trim()}`;
+                imgElement.alt = images[i].trim();
+                imgElement.addEventListener('click', () => {
+                    openImageInPopup(`./${images[i].trim()}`);
+                });
+                gallery.appendChild(imgElement);
+            }
+
+            // 버튼 상태 업데이트
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = endIndex >= images.length;
+        }
+
+        // 이미지를 팝업창에 원본 크기로 여는 함수
+        function openImageInPopup(src) {
+            const imagePopup = window.open("", "_blank");
+            imagePopup.document.write(`<img src="${src}" style="width:100%;height:auto;">`);
+            imagePopup.document.title = "Original Image: " + src;
+        }
+
+        // 페이지를 변경하는 함수
+        function changePage(direction) {
+            currentPage += direction;
+            displayImages();
+        }
+
+        // 페이지가 로드되면 이미지 로드 함수 호출
+        window.onload = loadImages;
+    </script>
+</body>
+</html>
