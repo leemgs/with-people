@@ -4,44 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Gallery with My Loved Ones</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        /* 추가적인 스타일링 */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .message {
-            background-color: #e0f7fa;
-            border: 1px solid #00796b;
-            border-radius: 5px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: center;
-            color: #004d40;
-            font-size: 1.2em;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            margin: 10px 0;
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .pagination button {
-            margin: 0 10px;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-        }
-        body { text-align: center; }
-    </style>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <div class="container">
@@ -63,71 +26,6 @@
         </div>
     </div>
 
-    <script>
-        const startYear = 1990;
-        const currentYear = new Date().getFullYear();
-        const yearsPerPage = 10;
-        let currentPage = 1;
-
-        function checkFolderExists(year) {
-            return fetch(`./${year}/input.txt`)
-                .then(response => {
-                    if (response.status === 404) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                })
-                .catch(() => false);
-        }
-
-        function loadYears(page) {
-            const yearList = document.getElementById('yearList');
-            yearList.innerHTML = '';
-
-            const start = (page - 1) * yearsPerPage;
-            const end = start + yearsPerPage;
-
-            const promises = [];
-            for (let year = currentYear - start; year > currentYear - end && year >= startYear; year--) {
-                promises.push(checkFolderExists(year).then(exists => ({ year, exists })));
-            }
-
-            Promise.all(promises).then(years => {
-                years.forEach(year => {
-                    const li = document.createElement('li');
-                    if (year.exists) {
-                        const a = document.createElement('a');
-                        a.href = `./${year.year}/${year.year}.html`;
-                        a.textContent = `${year.year} Year`;
-                        li.appendChild(a);
-                    } else {
-                        li.textContent = `${year.year} Year (Not Available)`;
-                    }
-                    yearList.appendChild(li);
-                });
-
-                document.getElementById('prevBtn').disabled = page === 1;
-                document.getElementById('nextBtn').disabled = end >= (currentYear - startYear + 1);
-            });
-        }
-
-        document.getElementById('prevBtn').addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                loadYears(currentPage);
-            }
-        });
-
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            if (currentPage * yearsPerPage < (currentYear - startYear + 1)) {
-                currentPage++;
-                loadYears(currentPage);
-            }
-        });
-
-        // 초기 로드
-        loadYears(currentPage);
-    </script>
+    <script src="index.js"></script>
 </body>
 </html>
