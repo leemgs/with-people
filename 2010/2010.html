@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery (2010)</title>
+    <title id="pageTitle">Image Gallery</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -99,7 +99,7 @@
         <a href="https://leemgs.github.io/with-people/" target="_blank">Home</a>
     </div>
 
-    <h1>Image Gallery (2010)</h1>
+    <h1 id="galleryTitle">Image Gallery</h1>
     <div id="gallery"></div>
 
     <!-- 페이지네이션 버튼 -->
@@ -112,6 +112,21 @@
         let images = [];  // 이미지 목록
         let currentPage = 1;  // 현재 페이지
         const imagesPerPage = 10;  // 페이지당 표시할 이미지 수
+
+        // 파일명에서 연도 값을 추출하는 함수
+        function extractYearFromUrl() {
+            const path = window.location.pathname;
+            const fileName = path.split('/').pop();
+            const year = fileName.split('.')[0];
+            return year;
+        }
+
+        // 연도 값을 사용하여 제목과 헤더를 설정하는 함수
+        function setPageTitleAndHeader() {
+            const year = extractYearFromUrl();
+            document.getElementById('pageTitle').innerText = `Image Gallery (${year})`;
+            document.getElementById('galleryTitle').innerText = `Image Gallery (${year})`;
+        }
 
         // input.txt 파일을 읽어서 이미지를 표시하는 함수
         async function loadImages() {
@@ -169,7 +184,10 @@
         }
 
         // 페이지가 로드되면 이미지 로드 함수 호출
-        window.onload = loadImages;
+        window.onload = function() {
+            setPageTitleAndHeader();
+            loadImages();
+        };
     </script>
 </body>
 </html>
