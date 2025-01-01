@@ -10,8 +10,8 @@ This project provides a web album system that allows users to easily manage thei
 
 Here's the simple procedure for users:
 
-1. Let's assume you have a photo taken with your camera, named 20240918-140030.jpg.
-2. Upload this *.jpg format file to the ./2024/ folder.
+1. Let's assume you have a photo taken with your camera, named 20260918-140030.jpg.
+2. Upload this *.jpg format file to the ./2026/ folder.
 3. Click the "Create a Pull Request" button.
 4. After review, click the "Merge a Pull Request" button to merge the uploaded PR.
 5. That's it! In about 3 minutes, when you access the website, you'll see your uploaded photo displayed in your web album.
