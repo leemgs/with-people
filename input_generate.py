@@ -2,7 +2,6 @@
 import sys
 import os
 import subprocess
-import glob
 
 # ANSI escape code for blue text
 BLUE = '\033[94m'
@@ -38,13 +37,21 @@ if __name__ == "__main__":
         print_blue(f"Error: Directory {year_dir} not found.")
         sys.exit(1)
 
-    # Generate input.txt with sorted jpg files
-    jpg_files = glob.glob('*.jpg')
-    sorted_jpg_files = sorted(jpg_files)
+    # Generate input.txt with sorted image files.
+    # Support multiple image formats (case-insensitive).
+    image_extensions = ('jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'tif', 'tiff', 'heic', 'avif')
+    image_files = []
+    for entry in os.listdir('.'):
+        if not os.path.isfile(entry):
+            continue
+        ext = os.path.splitext(entry)[1].lstrip('.').lower()
+        if ext in image_extensions:
+            image_files.append(entry)
+    sorted_image_files = sorted(image_files)
 
     with open('input.txt', 'w') as f:
-        for jpg_file in sorted_jpg_files:
-            f.write(f"{jpg_file}\n")
+        for image_file in sorted_image_files:
+            f.write(f"{image_file}\n")
 
     print_blue("[DEBUG]### The input.txt file is generated as follows.")
     print_blue(os.getcwd())
