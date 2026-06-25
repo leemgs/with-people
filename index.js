@@ -30,13 +30,18 @@ function loadYears(page) {
     Promise.all(promises).then(years => {
         years.forEach(year => {
             const li = document.createElement('li');
+            li.className = 'year-item';
             if (year.exists) {
                 const a = document.createElement('a');
+                a.className = 'year-card available';
                 a.href = `./${year.year}/${year.year}.html`;
-                a.textContent = `${year.year} Year`;
+                a.innerHTML = `<span class="year-number">${year.year}</span><span class="year-label">View album</span>`;
                 li.appendChild(a);
             } else {
-                li.textContent = `${year.year} Year (Not Available)`;
+                const card = document.createElement('span');
+                card.className = 'year-card unavailable';
+                card.innerHTML = `<span class="year-number">${year.year}</span><span class="year-label">Coming soon</span>`;
+                li.appendChild(card);
             }
             yearList.appendChild(li);
         });
