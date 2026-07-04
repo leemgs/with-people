@@ -19,9 +19,23 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    /* Classic Aqua blue desktop gradient */
-    background: linear-gradient(160deg, #dff0ff 0%, #a6c9f0 40%, #5b8fd6 100%);
+    /* Classic Mac OS X "Aqua Blue" desktop wallpaper, rebuilt in pure CSS:
+       a deep-blue field lit by soft flowing bands of light. */
+    background-color: #0a4bb0;
+    background-image:
+        /* upper-center burst of light */
+        radial-gradient(120% 90% at 50% -20%, rgba(220, 244, 255, 0.95) 0%, rgba(150, 210, 250, 0.45) 26%, rgba(60, 140, 225, 0) 55%),
+        /* soft aurora sweep coming from the left */
+        radial-gradient(90% 70% at 12% 30%, rgba(150, 220, 255, 0.55) 0%, rgba(90, 170, 240, 0) 60%),
+        /* cooler glow rising from the right */
+        radial-gradient(85% 80% at 88% 78%, rgba(120, 200, 255, 0.5) 0%, rgba(40, 120, 215, 0) 62%),
+        /* flowing highlight ribbon across the middle */
+        radial-gradient(140% 40% at 50% 62%, rgba(200, 235, 255, 0.35) 0%, rgba(60, 140, 225, 0) 70%),
+        /* base vertical depth: light sky at top, deep ocean at bottom */
+        linear-gradient(to bottom, #7fc0f5 0%, #2f7fdc 42%, #0f52b5 78%, #073a92 100%);
     background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 /* ===== Aqua window ===== */
