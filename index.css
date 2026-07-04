@@ -1,15 +1,11 @@
-/* ===== Theme tokens ===== */
+/* ===== Mac OS X "Aqua" themed landing page ===== */
 :root {
-    --bg-1: #1e1b4b;
-    --bg-2: #312e81;
-    --bg-3: #6d28d9;
-    --accent: #f472b6;
-    --accent-2: #a78bfa;
-    --text: #f8fafc;
-    --text-muted: #c7d2fe;
-    --card-border: rgba(255, 255, 255, 0.18);
-    --glass: rgba(255, 255, 255, 0.08);
-    --glass-strong: rgba(255, 255, 255, 0.14);
+    --aqua-blue: #3b8bef;
+    --aqua-blue-dark: #1f68d6;
+    --aqua-text: #1d1d1f;
+    --titlebar-top: #f6f6f6;
+    --titlebar-bottom: #d2d2d2;
+    --window-bg: #ececec;
 }
 
 * { box-sizing: border-box; }
@@ -17,237 +13,241 @@
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
-    color: var(--text);
-    text-align: center;
-    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 45%, var(--bg-3) 100%);
+    padding: 40px 16px;
+    font-family: "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--aqua-text);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* Classic Aqua blue desktop gradient */
+    background: linear-gradient(160deg, #dff0ff 0%, #a6c9f0 40%, #5b8fd6 100%);
     background-attachment: fixed;
-    overflow-x: hidden;
 }
 
-/* ===== Floating background orbs ===== */
-.bg-orbs {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
+/* ===== Aqua window ===== */
+.aqua-window {
+    width: 100%;
+    max-width: 820px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--window-bg);
+    border: 1px solid rgba(0, 0, 0, 0.35);
+    box-shadow:
+        0 22px 60px rgba(0, 0, 0, 0.4),
+        0 2px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+/* ===== Title bar (brushed / glossy) ===== */
+.titlebar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 46px;
+    padding: 0 14px;
+    background: linear-gradient(to bottom, var(--titlebar-top) 0%, #e8e8e8 50%, var(--titlebar-bottom) 100%);
+    border-bottom: 1px solid #a9a9a9;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.lights { display: flex; gap: 8px; z-index: 2; }
+.light {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.25),
+        0 1px 1px rgba(0, 0, 0, 0.15),
+        inset 0 3px 3px -1px rgba(255, 255, 255, 0.9);
+}
+.light.close { background: radial-gradient(circle at 50% 30%, #ff8a80, #ec5f55 70%); }
+.light.min   { background: radial-gradient(circle at 50% 30%, #ffdd8a, #f4b73e 70%); }
+.light.zoom  { background: radial-gradient(circle at 50% 30%, #a6f08a, #45c53a 70%); }
+
+.title {
+    position: absolute;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #3a3a3a;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
     pointer-events: none;
 }
-.orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.5;
-    animation: float 14s ease-in-out infinite;
-}
-.orb-1 { width: 380px; height: 380px; background: #ec4899; top: -80px; left: -60px; }
-.orb-2 { width: 320px; height: 320px; background: #8b5cf6; bottom: -60px; right: -40px; animation-delay: -4s; }
-.orb-3 { width: 260px; height: 260px; background: #38bdf8; top: 40%; left: 60%; animation-delay: -8s; }
 
-@keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(20px, -30px) scale(1.08); }
+/* GitHub link as a small Aqua capsule button */
+.github-link {
+    margin-left: auto;
+    z-index: 2;
+    padding: 4px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #2a2a2a;
+    border-radius: 999px;
+    background: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 48%, #dcdcdc 52%, #f4f4f4 100%);
+    border: 1px solid #9a9a9a;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition: filter 0.15s ease;
 }
+.github-link:hover { filter: brightness(1.05); }
+.github-link:active { filter: brightness(0.92); }
 
-/* ===== Layout ===== */
-.container {
-    position: relative;
-    z-index: 1;
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 56px 24px 72px;
+/* ===== Window body (subtle pinstripes) ===== */
+.window-body {
+    padding: 26px 30px 34px;
+    text-align: center;
+    background-color: #ededed;
+    background-image: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.022) 0px,
+        rgba(0, 0, 0, 0.022) 1px,
+        transparent 1px,
+        transparent 4px
+    );
 }
 
 /* ===== Hero ===== */
-.hero { margin-bottom: 36px; }
-
-.eyebrow {
-    display: inline-block;
-    margin: 0 0 14px;
-    padding: 6px 16px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    background: var(--glass);
-    border: 1px solid var(--card-border);
-    border-radius: 999px;
-    backdrop-filter: blur(8px);
-}
-
+.hero { margin-bottom: 18px; }
 h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 6vw, 3.8rem);
-    line-height: 1.1;
-    margin: 0 0 22px;
-    letter-spacing: -0.01em;
-    text-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    font-size: clamp(1.6rem, 4vw, 2.3rem);
+    font-weight: 700;
+    margin: 4px 0 0;
+    color: #2a2a2a;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
 }
-.hero-accent {
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+.hero-accent { color: var(--aqua-blue-dark); }
 
-.github-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 11px 22px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text);
-    text-decoration: none;
-    background: var(--glass-strong);
-    border: 1px solid var(--card-border);
-    border-radius: 999px;
-    backdrop-filter: blur(8px);
-    transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-}
-.github-link:hover {
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.22);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
-}
-
-/* ===== Message banner ===== */
+/* ===== Message: translucent Aqua info bubble ===== */
 .message {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 14px;
     text-align: left;
-    margin: 0 auto 48px;
-    max-width: 720px;
-    padding: 24px 28px;
-    color: var(--text);
-    background: var(--glass);
-    border: 1px solid var(--card-border);
-    border-left: 4px solid var(--accent);
-    border-radius: 18px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    margin: 20px auto 26px;
+    max-width: 640px;
+    padding: 16px 20px;
+    color: #1c3d63;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    border-radius: 14px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(213, 231, 250, 0.85));
+    border: 1px solid #9dbce0;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
-.message-icon { font-size: 2rem; line-height: 1; }
-.message p {
-    margin: 0;
-    font-size: 1.02rem;
-    font-weight: 300;
-    line-height: 1.65;
-    color: var(--text-muted);
-}
+.message-icon { font-size: 1.7rem; line-height: 1; }
+.message p { margin: 0; }
 
 /* ===== Section title ===== */
 .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.7rem;
-    font-weight: 600;
-    margin: 0 0 26px;
-    position: relative;
-    display: inline-block;
-}
-.section-title::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: -10px;
-    transform: translateX(-50%);
-    width: 56px;
-    height: 3px;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #333;
+    margin: 8px 0 18px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
-/* ===== Year grid ===== */
+/* ===== Year list: glossy Aqua gel buttons ===== */
 #yearList {
     list-style: none;
     padding: 0;
-    margin: 0 auto 44px;
+    margin: 0 auto 26px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
 }
 .year-item { margin: 0; }
 
 .year-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    height: 110px;
-    border-radius: 18px;
+    gap: 2px;
+    height: 72px;
+    padding: 8px;
+    border-radius: 16px;
     text-decoration: none;
-    border: 1px solid var(--card-border);
-    backdrop-filter: blur(10px);
-    transition: transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    transition: filter 0.15s ease, transform 0.1s ease;
 }
-.year-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.9rem;
-    font-weight: 700;
-    line-height: 1;
+/* The signature Aqua gloss: bright reflection over the top half */
+.year-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    border-radius: 16px 16px 40px 40px / 16px 16px 22px 22px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.25));
+    pointer-events: none;
 }
+.year-number { position: relative; font-size: 1.55rem; font-weight: 700; line-height: 1; }
 .year-label {
-    font-size: 0.74rem;
-    letter-spacing: 0.06em;
+    position: relative;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    opacity: 0.85;
+    opacity: 0.9;
 }
 
 .year-card.available {
-    color: var(--text);
-    background: linear-gradient(145deg, rgba(244, 114, 182, 0.22), rgba(167, 139, 250, 0.22));
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+    background: linear-gradient(to bottom, #7fb6f5 0%, #3b8bef 48%, #1f68d6 52%, #4f97ef 100%);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
     cursor: pointer;
 }
-.year-card.available:hover {
-    transform: translateY(-6px) scale(1.03);
-    background: linear-gradient(145deg, var(--accent), var(--accent-2));
-    box-shadow: 0 18px 40px rgba(244, 114, 182, 0.4);
-}
+.year-card.available:hover { filter: brightness(1.08) saturate(1.1); }
+.year-card.available:active { transform: translateY(1px); filter: brightness(0.95); }
 
 .year-card.unavailable {
-    color: var(--text-muted);
-    background: rgba(255, 255, 255, 0.04);
-    border-style: dashed;
-    opacity: 0.55;
+    color: #6b6b6b;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+    background: linear-gradient(to bottom, #fdfdfd 0%, #e6e6e6 48%, #cfcfcf 52%, #eaeaea 100%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
     cursor: not-allowed;
 }
 
-/* ===== Pagination ===== */
+/* ===== Pagination: Aqua capsule buttons ===== */
 .pagination {
     display: flex;
     justify-content: center;
     gap: 14px;
-    margin-top: 8px;
+    margin-top: 6px;
 }
 .pagination button {
-    padding: 12px 26px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text);
+    padding: 8px 22px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
     cursor: pointer;
-    background: var(--glass-strong);
-    border: 1px solid var(--card-border);
     border-radius: 999px;
-    backdrop-filter: blur(8px);
-    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--aqua-blue-dark);
+    background: linear-gradient(to bottom, #7fb6f5 0%, #3b8bef 48%, #1f68d6 52%, #4f97ef 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transition: filter 0.15s ease, transform 0.1s ease;
 }
-.pagination button:hover:not(:disabled) {
-    transform: translateY(-2px);
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    box-shadow: 0 12px 30px rgba(244, 114, 182, 0.35);
-}
+.pagination button:hover:not(:disabled) { filter: brightness(1.08) saturate(1.1); }
+.pagination button:active:not(:disabled) { transform: translateY(1px); filter: brightness(0.95); }
 .pagination button:disabled {
-    opacity: 0.4;
+    color: #9a9a9a;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+    border-color: #b5b5b5;
+    background: linear-gradient(to bottom, #fdfdfd, #dcdcdc);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
     cursor: not-allowed;
 }
 
 /* ===== Responsive ===== */
-@media (max-width: 600px) {
-    .container { padding: 40px 16px 56px; }
-    .message { flex-direction: column; text-align: center; gap: 10px; }
-    #yearList { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
+@media (max-width: 560px) {
+    .window-body { padding: 20px 16px 26px; }
+    .message { flex-direction: column; text-align: center; gap: 8px; }
+    #yearList { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+    .title { font-size: 0.8rem; }
 }
