@@ -36,17 +36,20 @@ jobs:
       run: |
         affected_years=()
         while IFS= read -r file; do
-          year=$(echo $file | cut -d'/' -f1)
-          if [[ $year =~ ^[0-9]{4}$ ]]; then
+          # Year folders now live under docs/year/<YYYY>/..., so the year is the 3rd path segment.
+          root=$(echo $file | cut -d'/' -f1)
+          sub=$(echo $file | cut -d'/' -f2)
+          year=$(echo $file | cut -d'/' -f3)
+          if [[ $root == "docs" && $sub == "year" && $year =~ ^[0-9]{4}$ ]]; then
             if [[ ! " ${affected_years[@]} " =~ " ${year} " ]]; then
               affected_years+=($year)
             fi
           fi
         done <<< "$MERGED_FILES"
-        
+
         for year in "${affected_years[@]}"; do
           echo "Running input_generate.py for year $year"
-          python3 ./input_generate.py $year
+          python3 ./input_generate.py docs/year/$year
         done
 
     - name: Commit changes

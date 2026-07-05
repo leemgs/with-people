@@ -2,17 +2,25 @@ const startYear = 2000;
 const currentYear = new Date().getFullYear();
 const yearsPerPage = 10;
 let currentPage = 1;
+// Albums can be created ahead of time (e.g. 2027 before it arrives), so the
+// grid starts from the highest existing future year rather than the calendar
+// year. Resolved on load by probing upward from currentYear.
+let topYear = currentYear;
 
 function checkFolderExists(year) {
-    return fetch(`./${year}/input.txt`)
-        .then(response => {
-            if (response.status === 404) {
-                return false;
-            } else {
-                return true;
-            }
-        })
+    return fetch(`./year/${year}/input.txt`)
+        .then(response => response.status !== 404)
         .catch(() => false);
+}
+
+// Probe currentYear+1, +2, … to include albums created for future years.
+async function resolveTopYear() {
+    let y = currentYear;
+    for (let ahead = currentYear + 1; ahead <= currentYear + 10; ahead++) {
+        if (await checkFolderExists(ahead)) y = ahead;
+        else break;
+    }
+    topYear = y;
 }
 
 function loadYears(page) {
@@ -23,7 +31,7 @@ function loadYears(page) {
     const end = start + yearsPerPage;
 
     const promises = [];
-    for (let year = currentYear - start; year > currentYear - end && year >= startYear; year--) {
+    for (let year = topYear - start; year > topYear - end && year >= startYear; year--) {
         promises.push(checkFolderExists(year).then(exists => ({ year, exists })));
     }
 
@@ -34,7 +42,7 @@ function loadYears(page) {
             if (year.exists) {
                 const a = document.createElement('a');
                 a.className = 'year-card available';
-                a.href = `./${year.year}/${year.year}.html`;
+                a.href = `./year/${year.year}/${year.year}.html`;
                 a.innerHTML = `<span class="year-number">${year.year}</span><span class="year-label">View album</span>`;
                 li.appendChild(a);
             } else {
@@ -54,7 +62,7 @@ function loadYears(page) {
         }
 
         document.getElementById('prevBtn').disabled = page === 1;
-        document.getElementById('nextBtn').disabled = end >= (currentYear - startYear + 1);
+        document.getElementById('nextBtn').disabled = end >= (topYear - startYear + 1);
     });
 }
 
@@ -66,11 +74,11 @@ document.getElementById('prevBtn').addEventListener('click', () => {
 });
 
 document.getElementById('nextBtn').addEventListener('click', () => {
-    if (currentPage * yearsPerPage < (currentYear - startYear + 1)) {
+    if (currentPage * yearsPerPage < (topYear - startYear + 1)) {
         currentPage++;
         loadYears(currentPage);
     }
 });
 
 // 초기 로드
-loadYears(currentPage);
+resolveTopYear().then(() => loadYears(currentPage));

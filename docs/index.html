@@ -24,6 +24,7 @@
         <div class="menubar">
             <span>File</span><span>Edit</span><span>View</span>
             <span>Go</span><span>Bookmarks</span><span>Help</span>
+            <span id="adminMenu" title="Manage years & photos">&#128274; Admin</span>
             <a class="menu-github" href="https://github.com/leemgs/with-people.git" target="_blank" rel="noopener">GitHub</a>
         </div>
 
@@ -82,6 +83,60 @@
         </div>
     </div>
 
+    <!-- ===== Admin dialog (GitHub-token powered) ===== -->
+    <div id="adminOverlay" class="admin-overlay" hidden>
+        <div class="admin-dialog" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+            <div class="admin-titlebar">
+                <span id="adminTitle" class="title">Admin — Manage albums</span>
+                <span id="adminClose" class="win-btn close" title="Close">&#10005;</span>
+            </div>
+
+            <div class="admin-body">
+                <!-- 1) Connection -->
+                <section class="admin-card">
+                    <h3>1. Connect to GitHub</h3>
+                    <p class="admin-hint">
+                        Paste a <b>fine-grained personal access token</b> scoped to
+                        <code>leemgs/with-people</code> with <b>Contents: Read and write</b>.
+                        It is stored only in this browser (localStorage) and never committed.
+                        <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create token &#8599;</a>
+                    </p>
+                    <div class="admin-row">
+                        <input type="password" id="tokenInput" placeholder="github_pat_..." autocomplete="off">
+                        <button id="connectBtn" class="admin-btn primary">Connect</button>
+                        <button id="disconnectBtn" class="admin-btn" hidden>Disconnect</button>
+                    </div>
+                    <p id="connStatus" class="admin-status"></p>
+                </section>
+
+                <!-- 2) Create a new year -->
+                <section class="admin-card" id="createSection" hidden>
+                    <h3>2. Create a new year</h3>
+                    <div class="admin-row">
+                        <select id="newYearSelect" aria-label="New year"></select>
+                        <button id="createYearBtn" class="admin-btn primary">Create year folder</button>
+                    </div>
+                    <p id="createStatus" class="admin-status"></p>
+                </section>
+
+                <!-- 3) Manage photos -->
+                <section class="admin-card" id="manageSection" hidden>
+                    <h3>3. Manage photos</h3>
+                    <div class="admin-row">
+                        <select id="manageYearSelect" aria-label="Year to manage"></select>
+                        <label class="admin-btn primary file-label">
+                            Upload images
+                            <input type="file" id="uploadInput" accept="image/*" multiple hidden>
+                        </label>
+                    </div>
+                    <p id="manageStatus" class="admin-status"></p>
+                    <ul id="photoList" class="photo-list"></ul>
+                </section>
+            </div>
+        </div>
+    </div>
+
     <script src="index.js"></script>
+    <script src="admin.js"></script>
 </body>
 </html>

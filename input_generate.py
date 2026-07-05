@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Generate a sorted input.txt of image files for a year folder, then commit and push it.
 
-Usage: input_generate.py <year>
+Year folders live under docs/year/, so pass the folder path, e.g. docs/year/2026.
+
+Usage: input_generate.py <year-folder>
 """
 import os
 import subprocess
@@ -62,8 +64,8 @@ def write_input_file(image_files):
 
 def main(argv):
     if len(argv) != 2:
-        error("Error: Please provide a year as an argument.")
-        error(f"Usage: {argv[0]} <year>")
+        error("Error: Please provide a year folder as an argument.")
+        error(f"Usage: {argv[0]} <year-folder>   e.g. {argv[0]} docs/year/2026")
         return 1
 
     year_dir = argv[1]
