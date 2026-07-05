@@ -4,91 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Gallery with My Loved Ones</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Gaegu:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <!-- ===== Caja / Nemo style file-manager window ===== -->
-    <div class="mint-window">
-
-        <!-- Title bar -->
-        <div class="titlebar">
-            <span class="title">with-people — File Browser</span>
-            <div class="win-controls" aria-hidden="true">
-                <span class="win-btn min">&#8211;</span>
-                <span class="win-btn max">&#9633;</span>
-                <span class="win-btn close">&#10005;</span>
-            </div>
-        </div>
-
-        <!-- Menu bar -->
-        <div class="menubar">
-            <span>File</span><span>Edit</span><span>View</span>
-            <span>Go</span><span>Bookmarks</span><span>Help</span>
-            <span id="adminMenu" title="Manage years & photos">&#128274; Admin</span>
-            <a class="menu-github" href="https://github.com/leemgs/with-people.git" target="_blank" rel="noopener">GitHub</a>
-        </div>
-
-        <!-- Toolbar (Back / Forward act as pagination) -->
-        <div class="toolbar">
-            <button id="prevBtn" class="tool-btn" disabled>&#9664; Back</button>
-            <button id="nextBtn" class="tool-btn">Forward &#9654;</button>
-            <span class="tool-sep"></span>
-            <span class="tool-icon" title="Up">&#9650;</span>
-            <span class="tool-icon" title="Reload">&#8635;</span>
-            <span class="tool-icon" title="Home">&#8962;</span>
-            <span class="tool-sep"></span>
-            <span class="zoom">100%</span>
-            <span class="view-select">Icon View &#9662;</span>
-            <span class="searchbox">&#128269;<input type="text" placeholder="Search" aria-label="Search"></span>
-        </div>
-
-        <!-- Location / breadcrumb bar -->
-        <div class="locationbar">
-            <span class="crumb active">&#8962; with-people</span>
-        </div>
-
-        <!-- Main split: Places sidebar + content -->
-        <div class="window-main">
-            <aside class="sidebar">
-                <div class="sidebar-heading">Places</div>
-                <ul>
-                    <li class="active">&#8962; with-people</li>
-                    <li>&#128421; Desktop</li>
-                    <li>&#128190; File System</li>
-                    <li>&#127760; Network</li>
-                    <li>&#128465; Trash</li>
-                </ul>
-            </aside>
-
-            <section class="content">
-                <header class="hero">
-                    <h1>Photo Gallery <span class="hero-accent">with My Loved Ones</span></h1>
-                </header>
-
-                <div class="message">
-                    <span class="message-icon">&#127881;</span>
-                    <p>Despite our rigorous selection criteria, congratulations on earning a proud spot in the album of my life's cherished memories. You've made it, and I couldn't be happier to have you as part of these unforgettable moments!</p>
-                </div>
-
-                <h2 class="section-title">Browse by Year</h2>
-                <ul id="yearList">
-                    <!-- 여기에 연도 목록이 동적으로 추가됩니다. -->
-                </ul>
-            </section>
-        </div>
-
-        <!-- Status bar -->
-        <div class="statusbar">
-            <span id="statusText">Browse the albums by year</span>
-        </div>
+    <!-- ===== Painted-sky backdrop (Studio Ghibli mood) ===== -->
+    <div class="sky" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="cloud cloud-4"></div>
+        <div class="bird b1"></div>
+        <div class="bird b2"></div>
+        <div class="bird b3"></div>
     </div>
+
+    <!-- ===== Rolling hills on the horizon ===== -->
+    <svg class="hills" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true">
+        <path class="hill hill-back" d="M0,240 C240,180 420,210 720,190 C1020,170 1200,220 1440,180 L1440,320 L0,320 Z"></path>
+        <path class="hill hill-mid"  d="M0,270 C260,230 500,275 780,250 C1060,225 1250,275 1440,245 L1440,320 L0,320 Z"></path>
+        <path class="hill hill-front" d="M0,300 C300,275 560,305 860,290 C1160,275 1300,305 1440,290 L1440,320 L0,320 Z"></path>
+    </svg>
+
+    <main class="page">
+        <nav class="topbar">
+            <span class="brand">&#127795; with&#8209;people</span>
+            <span class="spacer"></span>
+            <span id="adminMenu" class="pill" title="Manage years &amp; photos">&#128274; Admin</span>
+            <a class="pill" href="https://github.com/leemgs/with-people.git" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+
+        <header class="hero">
+            <h1>Photo Gallery <span class="hero-accent">with My Loved Ones</span></h1>
+            <p class="subtitle">A curated collection of cherished memories</p>
+        </header>
+
+        <div class="message">
+            <span class="message-icon">&#127881;</span>
+            <p>Despite our rigorous selection criteria, congratulations on earning a proud spot in the album of my life's cherished memories. You've made it, and I couldn't be happier to have you as part of these unforgettable moments!</p>
+        </div>
+
+        <h2 class="section-title">Browse by Year</h2>
+        <ul id="yearList">
+            <!-- 여기에 연도 목록이 동적으로 추가됩니다. -->
+        </ul>
+
+        <div class="pagination">
+            <button id="prevBtn" disabled>&#9664; Previous</button>
+            <button id="nextBtn">Next &#9654;</button>
+        </div>
+
+        <footer class="statusbar">
+            <span id="statusText">Browse the albums by year</span>
+        </footer>
+    </main>
 
     <!-- ===== Admin dialog (GitHub-token powered) ===== -->
     <div id="adminOverlay" class="admin-overlay" hidden>
         <div class="admin-dialog" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
             <div class="admin-titlebar">
-                <span id="adminTitle" class="title">Admin — Manage albums</span>
-                <span id="adminClose" class="win-btn close" title="Close">&#10005;</span>
+                <span id="adminTitle" class="title">&#127795; Admin — Manage albums</span>
+                <span id="adminClose" class="admin-x" title="Close">&#10005;</span>
             </div>
 
             <div class="admin-body">
