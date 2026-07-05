@@ -46,6 +46,13 @@ function loadYears(page) {
             yearList.appendChild(li);
         });
 
+        const availableCount = years.filter(y => y.exists).length;
+        const statusText = document.getElementById('statusText');
+        if (statusText) {
+            statusText.textContent =
+                `${years.length} items, ${availableCount} album${availableCount === 1 ? '' : 's'} available`;
+        }
+
         document.getElementById('prevBtn').disabled = page === 1;
         document.getElementById('nextBtn').disabled = end >= (currentYear - startYear + 1);
     });

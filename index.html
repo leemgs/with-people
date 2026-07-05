@@ -7,38 +7,78 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div class="aqua-window">
-        <!-- Aqua title bar with traffic-light controls -->
+    <!-- ===== Caja / Nemo style file-manager window ===== -->
+    <div class="mint-window">
+
+        <!-- Title bar -->
         <div class="titlebar">
-            <div class="lights" aria-hidden="true">
-                <span class="light close"></span>
-                <span class="light min"></span>
-                <span class="light zoom"></span>
+            <span class="title">with-people — File Browser</span>
+            <div class="win-controls" aria-hidden="true">
+                <span class="win-btn min">&#8211;</span>
+                <span class="win-btn max">&#9633;</span>
+                <span class="win-btn close">&#10005;</span>
             </div>
-            <div class="title">Photo Gallery with My Loved Ones</div>
-            <a class="github-link" href="https://github.com/leemgs/with-people.git" target="_blank" rel="noopener">GitHub</a>
         </div>
 
-        <div class="window-body">
-            <header class="hero">
-                <h1>Photo Gallery <span class="hero-accent">with My Loved Ones</span></h1>
-            </header>
+        <!-- Menu bar -->
+        <div class="menubar">
+            <span>File</span><span>Edit</span><span>View</span>
+            <span>Go</span><span>Bookmarks</span><span>Help</span>
+            <a class="menu-github" href="https://github.com/leemgs/with-people.git" target="_blank" rel="noopener">GitHub</a>
+        </div>
 
-            <!-- 축하 문구 -->
-            <div class="message">
-                <span class="message-icon">🎉</span>
-                <p>Despite our rigorous selection criteria, congratulations on earning a proud spot in the album of my life's cherished memories. You've made it, and I couldn't be happier to have you as part of these unforgettable moments!</p>
-            </div>
+        <!-- Toolbar (Back / Forward act as pagination) -->
+        <div class="toolbar">
+            <button id="prevBtn" class="tool-btn" disabled>&#9664; Back</button>
+            <button id="nextBtn" class="tool-btn">Forward &#9654;</button>
+            <span class="tool-sep"></span>
+            <span class="tool-icon" title="Up">&#9650;</span>
+            <span class="tool-icon" title="Reload">&#8635;</span>
+            <span class="tool-icon" title="Home">&#8962;</span>
+            <span class="tool-sep"></span>
+            <span class="zoom">100%</span>
+            <span class="view-select">Icon View &#9662;</span>
+            <span class="searchbox">&#128269;<input type="text" placeholder="Search" aria-label="Search"></span>
+        </div>
 
-            <h2 class="section-title">Browse by Year</h2>
-            <ul id="yearList">
-                <!-- 여기에 연도 목록이 동적으로 추가됩니다. -->
-            </ul>
+        <!-- Location / breadcrumb bar -->
+        <div class="locationbar">
+            <span class="crumb active">&#8962; with-people</span>
+        </div>
 
-            <div class="pagination">
-                <button id="prevBtn" disabled>◀ Previous</button>
-                <button id="nextBtn">Next ▶</button>
-            </div>
+        <!-- Main split: Places sidebar + content -->
+        <div class="window-main">
+            <aside class="sidebar">
+                <div class="sidebar-heading">Places</div>
+                <ul>
+                    <li class="active">&#8962; with-people</li>
+                    <li>&#128421; Desktop</li>
+                    <li>&#128190; File System</li>
+                    <li>&#127760; Network</li>
+                    <li>&#128465; Trash</li>
+                </ul>
+            </aside>
+
+            <section class="content">
+                <header class="hero">
+                    <h1>Photo Gallery <span class="hero-accent">with My Loved Ones</span></h1>
+                </header>
+
+                <div class="message">
+                    <span class="message-icon">&#127881;</span>
+                    <p>Despite our rigorous selection criteria, congratulations on earning a proud spot in the album of my life's cherished memories. You've made it, and I couldn't be happier to have you as part of these unforgettable moments!</p>
+                </div>
+
+                <h2 class="section-title">Browse by Year</h2>
+                <ul id="yearList">
+                    <!-- 여기에 연도 목록이 동적으로 추가됩니다. -->
+                </ul>
+            </section>
+        </div>
+
+        <!-- Status bar -->
+        <div class="statusbar">
+            <span id="statusText">Browse the albums by year</span>
         </div>
     </div>
 
