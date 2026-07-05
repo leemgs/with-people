@@ -4,188 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Image Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Gaegu:wght@700&display=swap" rel="stylesheet">
     <style>
+        /* ===== Studio Ghibli inspired gallery (matches the landing page) ===== */
         :root {
-            --aqua-blue: #3b8bef;
-            --aqua-blue-dark: #1f68d6;
-            --aqua-text: #1d1d1f;
-            --titlebar-top: #f6f6f6;
-            --titlebar-bottom: #d2d2d2;
-            --window-bg: #ececec;
+            --leaf: #5f9440;
+            --leaf-dark: #47712e;
+            --cream: #fffdf5;
+            --parchment: #fbf3df;
+            --ink: #574f43;
+            --ink-soft: #7a7264;
+            --terracotta: #d98a3d;
+            --card-border: #e7dcc0;
         }
-
         * { box-sizing: border-box; }
-
         body {
             margin: 0;
             min-height: 100vh;
-            padding: 40px 16px;
-            font-family: "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
-            color: var(--aqua-text);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            background: linear-gradient(160deg, #dff0ff 0%, #a6c9f0 40%, #5b8fd6 100%);
+            font-family: "Quicksand", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            color: var(--ink);
+            background: linear-gradient(to bottom, #7ec8e3 0%, #a9dcef 30%, #cfeadd 58%, #e9f4dc 100%);
             background-attachment: fixed;
+            overflow-x: hidden;
         }
 
-        /* ===== Aqua window ===== */
-        .aqua-window {
-            width: 100%;
-            max-width: 1200px;
-            border-radius: 12px;
-            overflow: hidden;
-            background: var(--window-bg);
-            border: 1px solid rgba(0, 0, 0, 0.35);
-            box-shadow: 0 22px 60px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        /* ===== Sky decorations ===== */
+        .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .sun {
+            position: absolute; top: 6%; right: 10%;
+            width: 140px; height: 140px; border-radius: 50%;
+            background: radial-gradient(circle, #fff8db 0%, #fff1b8 45%, rgba(255,241,184,0) 72%);
+            filter: blur(2px);
         }
+        .cloud {
+            position: absolute; width: 200px; height: 54px;
+            background: #fff; border-radius: 60px; opacity: 0.9;
+            box-shadow: 0 18px 40px rgba(120,150,170,0.16);
+            animation: drift linear infinite;
+        }
+        .cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; }
+        .cloud::before { width: 82px; height: 82px; top: -36px; left: 30px; }
+        .cloud::after  { width: 108px; height: 108px; top: -52px; left: 86px; }
+        .cloud-1 { top: 10%; left: -14%; transform: scale(1);   animation-duration: 95s; }
+        .cloud-2 { top: 22%; left: -22%; transform: scale(0.68); animation-duration: 125s; opacity: 0.78; }
+        @keyframes drift { from { margin-left: 0; } to { margin-left: 140vw; } }
+        @media (prefers-reduced-motion: reduce) { .cloud { animation: none; } }
 
-        /* ===== Title bar ===== */
-        .titlebar {
-            position: relative;
-            display: flex;
-            align-items: center;
-            height: 46px;
-            padding: 0 14px;
-            background: linear-gradient(to bottom, var(--titlebar-top) 0%, #e8e8e8 50%, var(--titlebar-bottom) 100%);
-            border-bottom: 1px solid #a9a9a9;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
-        }
-        .lights { display: flex; gap: 8px; z-index: 2; }
-        .light {
-            width: 14px; height: 14px; border-radius: 50%;
-            box-shadow: 0 0 0 0.5px rgba(0,0,0,0.25), 0 1px 1px rgba(0,0,0,0.15), inset 0 3px 3px -1px rgba(255,255,255,0.9);
-        }
-        .light.close { background: radial-gradient(circle at 50% 30%, #ff8a80, #ec5f55 70%); }
-        .light.min   { background: radial-gradient(circle at 50% 30%, #ffdd8a, #f4b73e 70%); }
-        .light.zoom  { background: radial-gradient(circle at 50% 30%, #a6f08a, #45c53a 70%); }
-        .title {
-            position: absolute; left: 0; right: 0;
-            text-align: center; font-size: 0.92rem; font-weight: 600; color: #3a3a3a;
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9); pointer-events: none;
-        }
-        /* Home link as small Aqua capsule */
-        .home-btn {
-            margin-left: auto; z-index: 2;
-            padding: 4px 14px; font-size: 0.78rem; font-weight: 600; text-decoration: none; color: #2a2a2a;
-            border-radius: 999px;
-            background: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 48%, #dcdcdc 52%, #f4f4f4 100%);
-            border: 1px solid #9a9a9a;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.9);
-            transition: filter 0.15s ease;
-        }
-        .home-btn:hover { filter: brightness(1.05); }
-        .home-btn:active { filter: brightness(0.92); }
+        /* ===== Page column ===== */
+        .page { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 22px 22px 40px; }
 
-        /* ===== Window body (pinstripes) ===== */
-        .window-body {
-            padding: 24px 30px 34px;
-            text-align: center;
-            background-color: #ededed;
-            background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.022) 0px, rgba(0,0,0,0.022) 1px, transparent 1px, transparent 4px);
+        /* ===== Top bar ===== */
+        .topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+        .brand { font-weight: 700; font-size: 1.05rem; color: var(--leaf-dark); text-decoration: none; text-shadow: 0 1px 0 rgba(255,255,255,0.6); }
+        .spacer { flex: 1; }
+        .pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 7px 16px; font-size: 0.85rem; font-weight: 600;
+            color: var(--leaf-dark); text-decoration: none; cursor: pointer;
+            border-radius: 999px; background: rgba(255,255,255,0.82);
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 3px 10px rgba(90,120,90,0.15);
+            transition: transform 0.15s ease, background 0.15s ease;
         }
+        .pill:hover { transform: translateY(-1px); background: #fff; }
 
+        /* ===== Hero ===== */
+        .hero { text-align: center; margin: 10px 0 22px; }
         h1 {
-            font-size: clamp(1.5rem, 4vw, 2.1rem);
-            font-weight: 700; margin: 4px 0 12px; color: #2a2a2a;
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+            font-family: "Gaegu", "Quicksand", cursive;
+            font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; margin: 0;
+            color: #3f5a34; text-shadow: 0 2px 0 rgba(255,255,255,0.65);
         }
-        h1 .accent { color: var(--aqua-blue-dark); }
+        h1 .accent { color: var(--terracotta); }
         .photo-count {
-            display: inline-block; margin: 0 0 22px;
-            padding: 5px 16px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;
-            text-transform: uppercase; color: #33557e;
-            border-radius: 999px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(214,231,250,0.9));
-            border: 1px solid #9dbce0;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+            display: inline-block; margin: 12px 0 0;
+            padding: 6px 18px; font-size: 0.76rem; font-weight: 700;
+            letter-spacing: 0.05em; text-transform: uppercase; color: var(--leaf-dark);
+            border-radius: 999px; background: linear-gradient(180deg, var(--cream), var(--parchment));
+            border: 1px solid var(--card-border); box-shadow: 0 3px 10px rgba(110,130,90,0.14);
         }
 
         /* Status (loading / empty) */
-        .status { color: #4a4a4a; font-size: 1rem; margin: 50px 0; }
+        .status { color: var(--ink-soft); font-size: 1rem; margin: 60px 0; text-align: center; }
         .spinner {
             width: 42px; height: 42px; margin: 0 auto 16px;
-            border: 4px solid rgba(0, 0, 0, 0.12);
-            border-top-color: var(--aqua-blue);
+            border: 4px solid rgba(95,148,64,0.18); border-top-color: var(--leaf);
             border-radius: 50%; animation: spin 0.9s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ===== Masonry gallery (white matte photo frames) ===== */
-        .gallery { column-count: 4; column-gap: 16px; }
+        /* ===== Masonry gallery (parchment photo frames) ===== */
+        .gallery { column-count: 4; column-gap: 18px; }
         @media (max-width: 1000px) { .gallery { column-count: 3; } }
         @media (max-width: 700px)  { .gallery { column-count: 2; } }
 
         .tile {
-            position: relative;
-            width: 100%;
-            margin: 0 0 16px;
-            break-inside: avoid;
-            padding: 6px 6px 0;
-            background: #ffffff;
-            border-radius: 9px;
-            border: 1px solid rgba(0, 0, 0, 0.28);
-            box-shadow: 0 3px 9px rgba(0, 0, 0, 0.28);
-            cursor: pointer;
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            position: relative; width: 100%; margin: 0 0 18px; break-inside: avoid;
+            padding: 8px 8px 0;
+            background: linear-gradient(180deg, var(--cream), var(--parchment));
+            border-radius: 16px; border: 1px solid var(--card-border);
+            box-shadow: 0 6px 16px rgba(110,130,90,0.2);
+            cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
-        .tile:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(31, 104, 214, 0.35); }
-        .tile img {
-            width: 100%; display: block;
-            border-radius: 4px;
-            opacity: 0; transition: opacity 0.5s ease;
-        }
+        .tile:hover { transform: translateY(-4px) rotate(-1deg); box-shadow: 0 14px 28px rgba(95,148,64,0.3); }
+        .tile img { width: 100%; display: block; border-radius: 10px; opacity: 0; transition: opacity 0.5s ease; }
         .tile img.loaded { opacity: 1; }
         .tile-cap {
-            padding: 6px 4px 7px;
-            font-size: 0.72rem; color: #5a5a5a; font-weight: 500;
+            padding: 8px 4px 9px; font-size: 0.74rem; color: var(--ink-soft); font-weight: 600;
             display: flex; align-items: center; justify-content: center; gap: 5px;
         }
         .tile-cap svg { width: 13px; height: 13px; opacity: 0.7; }
 
-        /* ===== Pagination: Aqua gel buttons ===== */
+        /* ===== Pagination: soft green buttons ===== */
         .pagination { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 34px; }
         .pagination button {
-            padding: 9px 24px; font-family: inherit; font-size: 0.9rem; font-weight: 600;
-            color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.35); cursor: pointer;
-            border-radius: 999px; border: 1px solid var(--aqua-blue-dark);
-            background: linear-gradient(to bottom, #7fb6f5 0%, #3b8bef 48%, #1f68d6 52%, #4f97ef 100%);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.6);
-            transition: filter 0.15s ease, transform 0.1s ease;
+            padding: 10px 26px; font-family: inherit; font-size: 0.92rem; font-weight: 700;
+            color: #fff; cursor: pointer; border-radius: 999px; border: none;
+            background: linear-gradient(180deg, #7fb457, var(--leaf));
+            box-shadow: 0 6px 16px rgba(71,113,46,0.35);
+            transition: transform 0.14s ease, filter 0.14s ease;
         }
-        .pagination button:hover:not(:disabled) { filter: brightness(1.08) saturate(1.1); }
-        .pagination button:active:not(:disabled) { transform: translateY(1px); filter: brightness(0.95); }
-        .pagination button:disabled {
-            color: #9a9a9a; text-shadow: 0 1px 0 rgba(255,255,255,0.7); border-color: #b5b5b5;
-            background: linear-gradient(to bottom, #fdfdfd, #dcdcdc);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.9); cursor: not-allowed;
-        }
-        .page-indicator { font-size: 0.88rem; color: #444; min-width: 110px; }
+        .pagination button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.05); }
+        .pagination button:active:not(:disabled) { transform: translateY(0); }
+        .pagination button:disabled { color: #f3f0e6; background: #c3c7b6; box-shadow: none; cursor: not-allowed; }
+        .page-indicator { font-size: 0.9rem; font-weight: 600; color: var(--ink-soft); min-width: 116px; text-align: center; }
+
+        /* ===== Footer scene (hills + Totoro) ===== */
+        .footer-scene { position: relative; height: 150px; margin: 44px -22px -40px; overflow: hidden; }
+        .footer-scene .hills { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 150px; }
+        .footer-scene .hill-back { fill: #a9cf74; }
+        .footer-scene .hill-mid { fill: #85b755; }
+        .footer-scene .hill-front { fill: #5f9440; }
+        .footer-scene .totoro { position: absolute; right: 8%; bottom: 26px; width: 92px; height: auto; filter: drop-shadow(0 5px 5px rgba(60,70,50,0.22)); }
 
         /* ===== Lightbox ===== */
         .lightbox {
             position: fixed; inset: 0; z-index: 50;
             display: flex; align-items: center; justify-content: center;
-            background: rgba(20, 26, 40, 0.9); backdrop-filter: blur(8px);
+            background: rgba(28, 36, 22, 0.9); backdrop-filter: blur(8px);
             opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .lightbox.open { opacity: 1; visibility: visible; }
         .lb-img {
-            max-width: 88vw; max-height: 80vh;
-            padding: 8px; background: #fff; border-radius: 8px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-            transform: scale(0.96); transition: transform 0.3s ease;
+            max-width: 88vw; max-height: 80vh; padding: 8px; background: #fff; border-radius: 12px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6); transform: scale(0.96); transition: transform 0.3s ease;
         }
         .lightbox.open .lb-img { transform: scale(1); }
         .lb-close, .lb-nav {
             position: absolute; display: flex; align-items: center; justify-content: center;
-            color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.4); cursor: pointer;
-            border-radius: 50%; border: 1px solid var(--aqua-blue-dark);
-            background: linear-gradient(to bottom, #7fb6f5 0%, #3b8bef 48%, #1f68d6 52%, #4f97ef 100%);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+            color: #fff; cursor: pointer; border-radius: 50%; border: none;
+            background: linear-gradient(180deg, #7fb457, var(--leaf));
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
             transition: filter 0.15s ease, transform 0.15s ease;
         }
-        .lb-close:hover, .lb-nav:hover { filter: brightness(1.1); transform: scale(1.08); }
+        .lb-close:hover, .lb-nav:hover { filter: brightness(1.08); transform: scale(1.08); }
         .lb-close { top: 22px; right: 22px; width: 44px; height: 44px; font-size: 1.5rem; line-height: 1; }
         .lb-nav { top: 50%; transform: translateY(-50%); width: 52px; height: 52px; font-size: 2rem; line-height: 1; }
         .lb-nav:hover { transform: translateY(-50%) scale(1.08); }
@@ -193,54 +167,76 @@
         .lb-next { right: 22px; }
         .lb-bar {
             position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
-            display: flex; align-items: center; gap: 16px; padding: 9px 20px;
-            font-size: 0.86rem; color: #2a2a2a; white-space: nowrap;
-            border-radius: 999px; border: 1px solid #9a9a9a;
-            background: linear-gradient(to bottom, #ffffff 0%, #efefef 48%, #dcdcdc 52%, #f4f4f4 100%);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.9);
+            display: flex; align-items: center; gap: 16px; padding: 10px 20px;
+            font-size: 0.86rem; color: var(--ink); white-space: nowrap;
+            border-radius: 999px; border: 1px solid var(--card-border);
+            background: linear-gradient(180deg, var(--cream), var(--parchment));
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
         }
-        .lb-bar a { color: var(--aqua-blue-dark); text-decoration: none; font-weight: 600; }
+        .lb-bar a { color: var(--leaf-dark); text-decoration: none; font-weight: 700; }
         .lb-bar a:hover { text-decoration: underline; }
-        .lb-sep { opacity: 0.35; }
+        .lb-sep { opacity: 0.4; }
 
         @media (max-width: 560px) {
-            .window-body { padding: 18px 12px 26px; }
+            .page { padding: 16px 14px 30px; }
             .gallery { column-gap: 12px; }
             .tile { margin-bottom: 12px; }
             .lb-nav { width: 42px; height: 42px; font-size: 1.7rem; }
             .lb-bar { font-size: 0.78rem; gap: 12px; padding: 8px 14px; }
-            .title { font-size: 0.8rem; }
+            .footer-scene { margin-left: -14px; margin-right: -14px; margin-bottom: -30px; }
         }
     </style>
 </head>
 <body>
-    <div class="aqua-window">
-        <div class="titlebar">
-            <div class="lights" aria-hidden="true">
-                <span class="light close"></span>
-                <span class="light min"></span>
-                <span class="light zoom"></span>
-            </div>
-            <div class="title" id="winTitle">Image Gallery</div>
-            <a class="home-btn" href="https://leemgs.github.io/with-people/">🏠 Home</a>
+    <!-- painted sky backdrop -->
+    <div class="sky" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+    </div>
+
+    <div class="page">
+        <nav class="topbar">
+            <a class="brand" href="https://leemgs.github.io/with-people/">&#127795; with&#8209;people</a>
+            <span class="spacer"></span>
+            <a class="pill" href="https://leemgs.github.io/with-people/">&#127968; Home</a>
+        </nav>
+
+        <header class="hero">
+            <h1 id="galleryTitle">Image Gallery</h1>
+            <span id="winTitle" hidden></span>
+            <p class="photo-count" id="photoCount"></p>
+        </header>
+
+        <div id="status" class="status">
+            <div class="spinner"></div>
+            Loading photos…
         </div>
 
-        <div class="window-body">
-            <h1 id="galleryTitle">Image Gallery</h1>
-            <p class="photo-count" id="photoCount"></p>
+        <main id="gallery" class="gallery"></main>
 
-            <div id="status" class="status">
-                <div class="spinner"></div>
-                Loading photos…
-            </div>
+        <div class="pagination" id="pagination" style="display:none;">
+            <button id="prevBtn" onclick="changePage(-1)" disabled>&#9664; Previous</button>
+            <span class="page-indicator" id="pageIndicator"></span>
+            <button id="nextBtn" onclick="changePage(1)">Next &#9654;</button>
+        </div>
 
-            <main id="gallery" class="gallery"></main>
-
-            <div class="pagination" id="pagination" style="display:none;">
-                <button id="prevBtn" onclick="changePage(-1)" disabled>◀ Previous</button>
-                <span class="page-indicator" id="pageIndicator"></span>
-                <button id="nextBtn" onclick="changePage(1)">Next ▶</button>
-            </div>
+        <!-- Ghibli footer: hills + a little Totoro -->
+        <div class="footer-scene" aria-hidden="true">
+            <svg class="hills" viewBox="0 0 1440 150" preserveAspectRatio="none">
+                <path class="hill-back"  d="M0,80 C240,40 480,70 720,55 C960,40 1200,75 1440,50 L1440,150 L0,150 Z"></path>
+                <path class="hill-mid"   d="M0,105 C260,75 520,110 780,92 C1040,74 1250,110 1440,90 L1440,150 L0,150 Z"></path>
+                <path class="hill-front" d="M0,130 C300,110 560,132 860,122 C1160,112 1300,132 1440,122 L1440,150 L0,150 Z"></path>
+            </svg>
+            <svg class="totoro" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+                <path d="M62 55 C58 20 74 24 82 62 Z" fill="#73787c"/>
+                <path d="M138 55 C142 20 126 24 118 62 Z" fill="#73787c"/>
+                <path d="M100 40 C155 40 175 95 175 155 C175 215 145 240 100 240 C55 240 25 215 25 155 C25 95 45 40 100 40 Z" fill="#7d8286"/>
+                <ellipse cx="100" cy="165" rx="52" ry="68" fill="#e2ddd0"/>
+                <circle cx="80" cy="112" r="13" fill="#fff"/><circle cx="82" cy="113" r="5.5" fill="#26221f"/>
+                <circle cx="120" cy="112" r="13" fill="#fff"/><circle cx="118" cy="113" r="5.5" fill="#26221f"/>
+                <ellipse cx="100" cy="131" rx="7" ry="5" fill="#3a332e"/>
+            </svg>
         </div>
     </div>
 
