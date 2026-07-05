@@ -78,6 +78,105 @@ body {
     to   { margin-left: 140vw; }
 }
 
+/* Moon — shown only at night */
+.moon {
+    position: absolute;
+    top: 8%; right: 12%;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 36%, #fdf8e6 0%, #f3e7bd 60%, #e6d59e 100%);
+    box-shadow: 0 0 50px rgba(253, 247, 226, 0.55), inset -14px -10px 0 rgba(210, 195, 150, 0.25);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+.moon::before, .moon::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(206, 190, 150, 0.35);
+}
+.moon::before { width: 26px; height: 26px; top: 34px; left: 30px; }
+.moon::after  { width: 16px; height: 16px; top: 74px; left: 68px; }
+
+/* Starfield — shown only at night */
+.stars { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s ease; }
+.star {
+    position: absolute;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
+    animation: twinkle var(--d, 2s) ease-in-out infinite var(--dl, 0s);
+}
+@keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 1; } }
+
+/* Fireflies — shown only at night, drifting near the hills */
+.fireflies { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s ease; }
+.firefly {
+    position: absolute;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #fff6a8;
+    box-shadow: 0 0 9px 2px rgba(255, 240, 150, 0.85);
+    animation: glow var(--d, 3s) ease-in-out infinite var(--dl, 0s);
+}
+@keyframes glow {
+    0%, 100% { opacity: 0.1; transform: translateY(0); }
+    50%      { opacity: 1;   transform: translateY(-10px); }
+}
+
+/* ===== Forest scenery ===== */
+.scenery {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: 42vh;
+    min-height: 220px;
+    z-index: 0;
+    pointer-events: none;
+    transition: filter 0.6s ease;
+}
+.tree   { position: absolute; left: 3%;  bottom: 13vh; width: 150px; height: auto; }
+.totoro { position: absolute; right: 7%; bottom: 11vh; width: 118px; height: auto;
+          filter: drop-shadow(0 6px 6px rgba(60, 70, 50, 0.25)); }
+
+/* ===== Soot sprites (susuwatari) ===== */
+.sprites { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.soot {
+    position: absolute;
+    width: 30px; height: 30px;
+    background: #262029;
+    border-radius: 50%;
+    animation: bob var(--d, 4s) ease-in-out infinite var(--dl, 0s);
+}
+/* radiating fuzz around the core */
+.soot::before {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    background: repeating-conic-gradient(#262029 0 7deg, transparent 7deg 14deg);
+    -webkit-mask: radial-gradient(circle, transparent 52%, #000 54%);
+            mask: radial-gradient(circle, transparent 52%, #000 54%);
+}
+.soot .eyes {
+    position: absolute;
+    top: 38%; left: 50%;
+    width: 5px; height: 5px;
+    margin-left: -6px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 8px 0 0 0 #fff;
+    z-index: 1;
+}
+.soot.s1 { top: 66%; left: 22%; --d: 4.2s; --dl: 0s;   }
+.soot.s2 { top: 74%; left: 40%; --d: 5.1s; --dl: 0.6s; --sc: 0.8; }
+.soot.s3 { top: 70%; left: 58%; --d: 4.6s; --dl: 1.2s; }
+.soot.s4 { top: 78%; left: 74%; --d: 5.4s; --dl: 0.3s; --sc: 0.7; }
+.soot.s5 { top: 64%; left: 86%; --d: 4.0s; --dl: 0.9s; --sc: 0.9; }
+@keyframes bob {
+    0%, 100% { transform: translateY(0) scale(var(--sc, 1)); }
+    50%      { transform: translateY(-12px) scale(var(--sc, 1)); }
+}
+
 /* Tiny distant birds (the classic Ghibli "v") */
 .bird {
     position: absolute;
@@ -454,5 +553,38 @@ h1 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .cloud { animation: none; }
+    .cloud, .soot, .firefly, .star { animation: none; }
+}
+
+/* ===== Night (starry) mode ===== */
+body.night {
+    background: linear-gradient(to bottom,
+        #0a1633 0%, #122a4d 38%, #1b3a5c 66%, #24425f 100%);
+}
+.night .stars     { opacity: 1; }
+.night .fireflies { opacity: 1; }
+.night .moon      { opacity: 1; }
+.night .sun       { opacity: 0; }
+.night .bird      { opacity: 0; }
+.night .cloud     { opacity: 0.22; filter: brightness(0.7); }
+
+.night .hill-back  { fill: #26432c; }
+.night .hill-mid   { fill: #1c3421; }
+.night .hill-front { fill: #122417; }
+.night .scenery    { filter: brightness(0.4) saturate(0.55); }
+
+.night h1,
+.night .section-title { color: #f3eede; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45); }
+.night .subtitle,
+.night .statusbar     { color: #c7d2e2; text-shadow: none; }
+.night .brand         { color: #e8f0e2; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4); }
+.night .pill {
+    color: #eaf1e4;
+    background: rgba(18, 30, 52, 0.62);
+    border-color: rgba(255, 255, 255, 0.22);
+}
+.night .pill:hover { background: rgba(30, 46, 74, 0.85); }
+.night .message {
+    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.4),
+                0 0 26px rgba(255, 226, 150, 0.12);
 }

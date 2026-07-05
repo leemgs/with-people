@@ -13,6 +13,8 @@
     <!-- ===== Painted-sky backdrop (Studio Ghibli mood) ===== -->
     <div class="sky" aria-hidden="true">
         <div class="sun"></div>
+        <div class="moon"></div>
+        <div class="stars"></div>
         <div class="cloud cloud-1"></div>
         <div class="cloud cloud-2"></div>
         <div class="cloud cloud-3"></div>
@@ -29,10 +31,57 @@
         <path class="hill hill-front" d="M0,300 C300,275 560,305 860,290 C1160,275 1300,305 1440,290 L1440,320 L0,320 Z"></path>
     </svg>
 
+    <!-- ===== Forest scenery: a big camphor tree and a Totoro ===== -->
+    <div class="scenery" aria-hidden="true">
+        <svg class="tree" viewBox="0 0 220 280" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 280 C96 220 92 190 96 150 L124 150 C128 190 124 220 120 280 Z" fill="#6b5138"/>
+            <g fill="#4f8a3a">
+                <ellipse cx="110" cy="95" rx="95" ry="72"/>
+                <ellipse cx="60" cy="120" rx="52" ry="45"/>
+                <ellipse cx="165" cy="120" rx="52" ry="45"/>
+            </g>
+            <g fill="#5f9f45">
+                <ellipse cx="110" cy="80" rx="70" ry="52"/>
+                <ellipse cx="80" cy="70" rx="34" ry="30"/>
+                <ellipse cx="140" cy="72" rx="34" ry="30"/>
+            </g>
+        </svg>
+
+        <svg class="totoro" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+            <path d="M62 55 C58 20 74 24 82 62 Z" fill="#73787c"/>
+            <path d="M138 55 C142 20 126 24 118 62 Z" fill="#73787c"/>
+            <path d="M100 40 C155 40 175 95 175 155 C175 215 145 240 100 240 C55 240 25 215 25 155 C25 95 45 40 100 40 Z" fill="#7d8286"/>
+            <ellipse cx="100" cy="165" rx="52" ry="68" fill="#e2ddd0"/>
+            <g fill="none" stroke="#8a8f93" stroke-width="4" stroke-linecap="round">
+                <path d="M88 122 l12 8 l12 -8"/>
+                <path d="M84 142 l16 9 l16 -9"/>
+                <path d="M84 162 l16 9 l16 -9"/>
+            </g>
+            <circle cx="80" cy="112" r="13" fill="#fff"/><circle cx="82" cy="113" r="5.5" fill="#26221f"/>
+            <circle cx="120" cy="112" r="13" fill="#fff"/><circle cx="118" cy="113" r="5.5" fill="#26221f"/>
+            <ellipse cx="100" cy="131" rx="7" ry="5" fill="#3a332e"/>
+            <g stroke="#6f7377" stroke-width="2.5" stroke-linecap="round">
+                <path d="M66 126 L26 118"/><path d="M66 135 L28 139"/>
+                <path d="M134 126 L174 118"/><path d="M134 135 L172 139"/>
+            </g>
+        </svg>
+    </div>
+
+    <!-- ===== Soot sprites (susuwatari) & fireflies ===== -->
+    <div class="sprites" aria-hidden="true">
+        <div class="soot s1"><span class="eyes"></span></div>
+        <div class="soot s2"><span class="eyes"></span></div>
+        <div class="soot s3"><span class="eyes"></span></div>
+        <div class="soot s4"><span class="eyes"></span></div>
+        <div class="soot s5"><span class="eyes"></span></div>
+    </div>
+    <div class="fireflies" aria-hidden="true"></div>
+
     <main class="page">
         <nav class="topbar">
             <span class="brand">&#127795; with&#8209;people</span>
             <span class="spacer"></span>
+            <span id="themeToggle" class="pill" title="Toggle day / night">&#127769; Night</span>
             <span id="adminMenu" class="pill" title="Manage years &amp; photos">&#128274; Admin</span>
             <a class="pill" href="https://github.com/leemgs/with-people.git" target="_blank" rel="noopener">GitHub</a>
         </nav>
@@ -114,6 +163,44 @@
             </div>
         </div>
     </div>
+
+    <!-- Day/night toggle + procedurally scattered stars and fireflies -->
+    <script>
+    (function () {
+        function scatter(sel, n, topMin, topRange, make) {
+            var box = document.querySelector(sel);
+            if (!box) return;
+            for (var i = 0; i < n; i++) {
+                var e = document.createElement('span');
+                e.style.left = (Math.random() * 100).toFixed(2) + '%';
+                e.style.top = (topMin + Math.random() * topRange).toFixed(2) + '%';
+                e.style.setProperty('--d', (1.6 + Math.random() * 3).toFixed(2) + 's');
+                e.style.setProperty('--dl', (Math.random() * 4).toFixed(2) + 's');
+                make(e);
+                box.appendChild(e);
+            }
+        }
+        scatter('.stars', 70, 0, 60, function (e) {
+            e.className = 'star';
+            var s = (0.5 + Math.random()).toFixed(2);
+            e.style.width = e.style.height = s * 2 + 'px';
+        });
+        scatter('.fireflies', 16, 52, 42, function (e) { e.className = 'firefly'; });
+
+        var btn = document.getElementById('themeToggle');
+        var KEY = 'wp_theme';
+        function apply(t) {
+            document.body.classList.toggle('night', t === 'night');
+            if (btn) btn.innerHTML = (t === 'night') ? '☀️ Day' : '🌙 Night';
+        }
+        apply(localStorage.getItem(KEY) || 'day');
+        if (btn) btn.addEventListener('click', function () {
+            var t = document.body.classList.contains('night') ? 'day' : 'night';
+            localStorage.setItem(KEY, t);
+            apply(t);
+        });
+    })();
+    </script>
 
     <script src="index.js"></script>
     <script src="admin.js"></script>
