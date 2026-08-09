@@ -53,15 +53,20 @@
     // ----- GitHub REST helper ------------------------------------------------
     async function gh(path, options) {
         options = options || {};
-        const res = await fetch('https://api.github.com' + path, {
-            method: options.method || 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + token,
-                'Accept': 'application/vnd.github+json',
-                'X-GitHub-Api-Version': '2022-11-28'
-            },
-            body: options.body ? JSON.stringify(options.body) : undefined
-        });
+        let res;
+        try {
+            res = await fetch('https://api.github.com' + path, {
+                method: options.method || 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Accept': 'application/vnd.github+json',
+                    'X-GitHub-Api-Version': '2022-11-28'
+                },
+                body: options.body ? JSON.stringify(options.body) : undefined
+            });
+        } catch (e) {
+            throw new Error('Could not reach the GitHub API. Check your network or browser privacy settings and try again.');
+        }
         if (!res.ok) {
             let detail = '';
             try { detail = (await res.json()).message || ''; } catch (e) { /* ignore */ }
@@ -70,7 +75,9 @@
         return res.status === 204 ? null : res.json();
     }
 
-    const repoPath = (p) => `/repos/${REPO.owner}/${REPO.name}/${p}`;
+    // GitHub treats the repository endpoint with a trailing slash as a
+    // different (404) route. Keep the base URL slash-free when p is empty.
+    const repoPath = (p) => `/repos/${REPO.owner}/${REPO.name}${p ? `/${p}` : ''}`;
 
     // List entries of a repo directory ([] if it does not exist).
     async function listDir(dirPath) {
@@ -162,6 +169,8 @@
             await refreshYears();
         } catch (e) {
             token = '';
+            localStorage.removeItem(TOKEN_KEY);
+            reflectConnection();
             setStatus(el.connStatus, e.message, 'err');
         }
     }
