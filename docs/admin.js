@@ -250,17 +250,35 @@
         imgs.slice().sort((a, b) => a.name.localeCompare(b.name)).forEach(img => {
             const li = document.createElement('li');
             li.className = 'photo-item';
-            li.innerHTML =
-                `<img class="photo-thumb" src="./year/${year}/${encodeURIComponent(img.name)}" alt="" loading="lazy">` +
-                `<span class="photo-name">${img.name}</span>` +
-                `<span class="photo-actions">` +
-                `<button class="admin-btn small" data-act="rename">Rename</button>` +
-                `<button class="admin-btn small danger" data-act="delete">Delete</button>` +
-                `</span>`;
-            li.querySelector('[data-act="rename"]').addEventListener('click', () => renamePhoto(year, img));
-            li.querySelector('[data-act="delete"]').addEventListener('click', () => deletePhoto(year, img));
+
+            const thumbnail = document.createElement('img');
+            thumbnail.className = 'photo-thumb';
+            thumbnail.src = `./year/${year}/${encodeURIComponent(img.name)}?v=${img.sha}`;
+            thumbnail.alt = '';
+            thumbnail.loading = 'lazy';
+
+            const name = document.createElement('span');
+            name.className = 'photo-name';
+            name.textContent = img.name;
+
+            const actions = document.createElement('span');
+            actions.className = 'photo-actions';
+            const replaceButton = actionButton('Replace', () => replacePhoto(year, img));
+            const renameButton = actionButton('Rename', () => renamePhoto(year, img));
+            const deleteButton = actionButton('Delete', () => deletePhoto(year, img), 'danger');
+            actions.append(replaceButton, renameButton, deleteButton);
+            li.append(thumbnail, name, actions);
             el.photoList.appendChild(li);
         });
+    }
+
+    function actionButton(label, onClick, kind) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `admin-btn small${kind ? ` ${kind}` : ''}`;
+        button.textContent = label;
+        button.addEventListener('click', onClick);
+        return button;
     }
 
     // ----- upload ------------------------------------------------------------
@@ -290,6 +308,43 @@
             setStatus(el.manageStatus, e.message, 'err');
         } finally {
             el.uploadInput.value = '';
+        }
+    }
+
+    // ----- replace image contents while preserving its published URL --------
+    function chooseReplacement(img) {
+        return new Promise(resolve => {
+            const picker = document.createElement('input');
+            picker.type = 'file';
+            picker.accept = `.${img.name.split('.').pop()},image/*`;
+            picker.addEventListener('change', () => resolve(picker.files[0] || null), { once: true });
+            picker.addEventListener('cancel', () => resolve(null), { once: true });
+            picker.click();
+        });
+    }
+
+    async function replacePhoto(year, img) {
+        const file = await chooseReplacement(img);
+        if (!file) return;
+
+        const currentExt = img.name.split('.').pop().toLowerCase();
+        const replacementExt = file.name.split('.').pop().toLowerCase();
+        if (currentExt !== replacementExt) {
+            setStatus(el.manageStatus,
+                `Choose a .${currentExt} file to replace ${img.name}, or upload it as a new photo.`, 'err');
+            return;
+        }
+
+        setStatus(el.manageStatus, `Replacing ${img.name}…`);
+        try {
+            const bytes = new Uint8Array(await file.arrayBuffer());
+            await commitChanges([
+                { path: `${YEAR_BASE}/${year}/${img.name}`, base64: bytesToBase64(bytes) }
+            ], `Replace ${img.name} in ${year}`);
+            setStatus(el.manageStatus, `Replaced ${img.name}.`, 'ok');
+            await loadPhotos();
+        } catch (e) {
+            setStatus(el.manageStatus, e.message, 'err');
         }
     }
 
