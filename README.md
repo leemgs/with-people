@@ -144,8 +144,10 @@ Instead of editing files in the repo by hand, the site owner can click
    folder, a copy of `year/template.html`, and an empty `input.txt` are
    committed for you.
 3. **Manage photos** — upload, replace, delete, or rename images for a year.
-   After choosing images, edit their filenames in the upload queue before
-   clicking **Upload selected**.
+   JPG, JPEG, and PNG uploads are automatically named from the browser file's
+   modified time using `YYYYMMDD-HHMMSS.ext` (for example,
+   `20260821-143232.jpg`). Review or correct the timestamp in the upload queue,
+   then click **Upload selected**. The timestamp year must match the album.
    **Replace** updates the image while preserving its filename and published
    URL (the replacement must use the same extension). `input.txt` is
    regenerated automatically when the image list changes, and each action is

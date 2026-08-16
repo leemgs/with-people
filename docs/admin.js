@@ -16,6 +16,8 @@
     const TOKEN_KEY = 'wp_gh_token';
     const MIN_YEAR = 2000;
     const IMAGE_EXTS = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'tif', 'tiff', 'heic', 'avif'];
+    const UPLOAD_EXTS = ['jpg', 'jpeg', 'png'];
+    const TIMESTAMP_NAME = /^(\d{8})-(\d{6})\.(jpg|jpeg|png)$/i;
 
     let token = localStorage.getItem(TOKEN_KEY) || '';
 
@@ -292,10 +294,46 @@
         el.uploadBtn.disabled = true;
     }
 
+    function pad2(value) {
+        return String(value).padStart(2, '0');
+    }
+
+    function timestampName(date, extension) {
+        return `${date.getFullYear()}${pad2(date.getMonth() + 1)}${pad2(date.getDate())}-` +
+            `${pad2(date.getHours())}${pad2(date.getMinutes())}${pad2(date.getSeconds())}.${extension}`;
+    }
+
+    function hasValidTimestamp(name) {
+        const match = name.match(TIMESTAMP_NAME);
+        if (!match) return false;
+        const stamp = match[1] + match[2];
+        const parts = [stamp.slice(0, 4), stamp.slice(4, 6), stamp.slice(6, 8),
+            stamp.slice(8, 10), stamp.slice(10, 12), stamp.slice(12, 14)].map(Number);
+        const date = new Date(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
+        return timestampName(date, match[3].toLowerCase()).toLowerCase() === name.toLowerCase();
+    }
+
+    function timestampedUploads(fileList) {
+        const used = new Set();
+        return Array.from(fileList)
+            .filter(file => UPLOAD_EXTS.includes(file.name.split('.').pop().toLowerCase()))
+            .map(file => {
+                const extension = file.name.split('.').pop().toLowerCase();
+                const modified = Number.isFinite(file.lastModified) && file.lastModified > 0
+                    ? file.lastModified : Date.now();
+                const date = new Date(modified);
+                let name = timestampName(date, extension);
+                while (used.has(name)) {
+                    date.setSeconds(date.getSeconds() + 1);
+                    name = timestampName(date, extension);
+                }
+                used.add(name);
+                return { file, name };
+            });
+    }
+
     function stageUploadFiles(fileList) {
-        pendingUploads = Array.from(fileList)
-            .filter(file => isImage(file.name))
-            .map(file => ({ file, name: file.name }));
+        pendingUploads = timestampedUploads(fileList);
         el.uploadQueue.innerHTML = '';
 
         pendingUploads.forEach((upload, index) => {
@@ -306,6 +344,8 @@
             const input = document.createElement('input');
             input.type = 'text';
             input.value = upload.name;
+            input.pattern = '\\d{8}-\\d{6}\\.(jpg|jpeg|png)';
+            input.title = 'Use YYYYMMDD-HHMMSS.jpg, .jpeg, or .png';
             input.setAttribute('aria-label', `Filename for ${upload.file.name}`);
             input.addEventListener('input', () => { upload.name = input.value.trim(); });
             label.appendChild(input);
@@ -315,17 +355,20 @@
 
         el.uploadBtn.disabled = !pendingUploads.length;
         setStatus(el.manageStatus, pendingUploads.length
-            ? `Review ${pendingUploads.length} filename(s), then click Upload selected.`
-            : 'Choose one or more supported image files.', pendingUploads.length ? '' : 'err');
+            ? `Filenames use each file's modified time. Review them, then click Upload selected.`
+            : 'Choose one or more JPG, JPEG, or PNG files.', pendingUploads.length ? '' : 'err');
     }
 
-    function validateUploadNames(uploads, existingNames) {
+    function validateUploadNames(uploads, existingNames, year) {
         const names = uploads.map(upload => upload.name);
         if (names.some(name => !name || name === '.' || name === '..' || /[\\/]/.test(name))) {
             throw new Error('Each image needs a valid filename without / or \\.');
         }
-        if (names.some(name => !isImage(name))) {
-            throw new Error('Every filename must end with a supported image extension.');
+        if (names.some(name => !hasValidTimestamp(name))) {
+            throw new Error('Use a valid date and time in YYYYMMDD-HHMMSS.jpg, .jpeg, or .png format.');
+        }
+        if (names.some(name => !name.startsWith(year))) {
+            throw new Error(`Every filename in the ${year} album must start with ${year}.`);
         }
         const changedExtension = uploads.find(upload =>
             upload.name.split('.').pop().toLowerCase() !== upload.file.name.split('.').pop().toLowerCase());
@@ -352,7 +395,7 @@
         setStatus(el.manageStatus, `Uploading ${pendingUploads.length} file(s)…`);
         try {
             const current = (await imagesForYear(year)).map(image => image.name);
-            const names = validateUploadNames(pendingUploads, current);
+            const names = validateUploadNames(pendingUploads, current, year);
             const changes = [];
             for (const upload of pendingUploads) {
                 const buf = new Uint8Array(await upload.file.arrayBuffer());

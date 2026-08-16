@@ -151,14 +151,14 @@
                 <section class="admin-card" id="manageSection" hidden>
                     <h3>3. Manage photos</h3>
                     <p class="admin-hint">
-                        Upload new images, replace an existing image while keeping its URL,
-                        rename files, or delete them. Every action is committed directly to GitHub.
+                        New JPG, JPEG, and PNG images are named from their modified time as
+                        <code>YYYYMMDD-HHMMSS.ext</code>. Review the timestamp before uploading.
                     </p>
                     <div class="admin-row">
                         <select id="manageYearSelect" aria-label="Year to manage"></select>
                         <label class="admin-btn primary file-label">
                             Choose images
-                            <input type="file" id="uploadInput" accept="image/*" multiple hidden>
+                            <input type="file" id="uploadInput" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple hidden>
                         </label>
                         <button id="uploadBtn" class="admin-btn primary" type="button" disabled>Upload selected</button>
                     </div>
