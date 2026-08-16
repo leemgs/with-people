@@ -520,6 +520,15 @@ h1 {
 .admin-btn.small { padding: 5px 12px; font-size: 0.78rem; }
 .file-label { display: inline-flex; align-items: center; }
 
+.upload-queue { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 7px; }
+.upload-queue:empty { display: none; }
+.upload-queue-item label { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; align-items: center; font-size: 0.78rem; color: var(--ink-soft); }
+.upload-queue-item input {
+    min-width: 0; padding: 7px 9px; border: 1px solid #d7c9a7; border-radius: 8px;
+    background: rgba(255,255,255,.82); color: var(--ink); font: inherit;
+}
+.upload-queue-item input:focus { outline: 2px solid rgba(91,143,63,.3); border-color: var(--leaf); }
+
 .admin-status { margin: 10px 0 0; font-size: 0.82rem; min-height: 1em; color: var(--ink-soft); }
 .admin-status.ok { color: var(--leaf-dark); }
 .admin-status.err { color: #c2532f; }

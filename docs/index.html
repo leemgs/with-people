@@ -157,10 +157,12 @@
                     <div class="admin-row">
                         <select id="manageYearSelect" aria-label="Year to manage"></select>
                         <label class="admin-btn primary file-label">
-                            Upload images
+                            Choose images
                             <input type="file" id="uploadInput" accept="image/*" multiple hidden>
                         </label>
+                        <button id="uploadBtn" class="admin-btn primary" type="button" disabled>Upload selected</button>
                     </div>
+                    <ul id="uploadQueue" class="upload-queue" aria-label="Images selected for upload"></ul>
                     <p id="manageStatus" class="admin-status"></p>
                     <ul id="photoList" class="photo-list"></ul>
                 </section>

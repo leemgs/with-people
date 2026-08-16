@@ -26,7 +26,8 @@
         ['adminMenu', 'adminOverlay', 'adminClose', 'tokenInput', 'connectBtn',
          'disconnectBtn', 'connStatus', 'createSection', 'newYearSelect',
          'createYearBtn', 'createStatus', 'manageSection', 'manageYearSelect',
-         'uploadInput', 'manageStatus', 'photoList'].forEach(id => { el[id] = $(id); });
+         'uploadInput', 'uploadBtn', 'uploadQueue', 'manageStatus',
+         'photoList'].forEach(id => { el[id] = $(id); });
     }
     function setStatus(node, msg, kind) {
         node.textContent = msg || '';
@@ -282,32 +283,92 @@
     }
 
     // ----- upload ------------------------------------------------------------
-    async function uploadFiles(fileList) {
+    let pendingUploads = [];
+
+    function clearUploadQueue() {
+        pendingUploads = [];
+        el.uploadInput.value = '';
+        el.uploadQueue.innerHTML = '';
+        el.uploadBtn.disabled = true;
+    }
+
+    function stageUploadFiles(fileList) {
+        pendingUploads = Array.from(fileList)
+            .filter(file => isImage(file.name))
+            .map(file => ({ file, name: file.name }));
+        el.uploadQueue.innerHTML = '';
+
+        pendingUploads.forEach((upload, index) => {
+            const item = document.createElement('li');
+            item.className = 'upload-queue-item';
+            const label = document.createElement('label');
+            label.textContent = `File ${index + 1}`;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = upload.name;
+            input.setAttribute('aria-label', `Filename for ${upload.file.name}`);
+            input.addEventListener('input', () => { upload.name = input.value.trim(); });
+            label.appendChild(input);
+            item.appendChild(label);
+            el.uploadQueue.appendChild(item);
+        });
+
+        el.uploadBtn.disabled = !pendingUploads.length;
+        setStatus(el.manageStatus, pendingUploads.length
+            ? `Review ${pendingUploads.length} filename(s), then click Upload selected.`
+            : 'Choose one or more supported image files.', pendingUploads.length ? '' : 'err');
+    }
+
+    function validateUploadNames(uploads, existingNames) {
+        const names = uploads.map(upload => upload.name);
+        if (names.some(name => !name || name === '.' || name === '..' || /[\\/]/.test(name))) {
+            throw new Error('Each image needs a valid filename without / or \\.');
+        }
+        if (names.some(name => !isImage(name))) {
+            throw new Error('Every filename must end with a supported image extension.');
+        }
+        const changedExtension = uploads.find(upload =>
+            upload.name.split('.').pop().toLowerCase() !== upload.file.name.split('.').pop().toLowerCase());
+        if (changedExtension) {
+            throw new Error(`Keep the .${changedExtension.file.name.split('.').pop().toLowerCase()} extension for ${changedExtension.file.name}.`);
+        }
+        if (new Set(names).size !== names.length) {
+            throw new Error('Selected images must use unique filenames.');
+        }
+        const conflict = names.find(name => existingNames.includes(name));
+        if (conflict) {
+            throw new Error(`"${conflict}" already exists. Choose another name or use Replace.`);
+        }
+        return names;
+    }
+
+    async function uploadFiles() {
         const year = el.manageYearSelect.value;
-        const files = Array.from(fileList).filter(f => isImage(f.name));
-        if (!year || !files.length) {
+        if (!year || !pendingUploads.length) {
             setStatus(el.manageStatus, 'Select a year and image files first.', 'err');
             return;
         }
-        setStatus(el.manageStatus, `Uploading ${files.length} file(s)…`);
+        el.uploadBtn.disabled = true;
+        setStatus(el.manageStatus, `Uploading ${pendingUploads.length} file(s)…`);
         try {
+            const current = (await imagesForYear(year)).map(image => image.name);
+            const names = validateUploadNames(pendingUploads, current);
             const changes = [];
-            for (const f of files) {
-                const buf = new Uint8Array(await f.arrayBuffer());
-                changes.push({ path: `${YEAR_BASE}/${year}/${f.name}`, base64: bytesToBase64(buf) });
+            for (const upload of pendingUploads) {
+                const buf = new Uint8Array(await upload.file.arrayBuffer());
+                changes.push({ path: `${YEAR_BASE}/${year}/${upload.name}`, base64: bytesToBase64(buf) });
             }
             // regenerate input.txt from current + newly uploaded names
-            const current = (await imagesForYear(year)).map(i => i.name);
-            const names = Array.from(new Set(current.concat(files.map(f => f.name))));
-            changes.push({ path: `${YEAR_BASE}/${year}/input.txt`, base64: textToBase64(buildInputTxt(names)) });
+            changes.push({ path: `${YEAR_BASE}/${year}/input.txt`,
+                base64: textToBase64(buildInputTxt(current.concat(names))) });
 
-            await commitChanges(changes, `Add ${files.length} photo(s) to ${year}`);
-            setStatus(el.manageStatus, `Uploaded ${files.length} file(s).`, 'ok');
+            await commitChanges(changes, `Add ${pendingUploads.length} photo(s) to ${year}`);
+            setStatus(el.manageStatus, `Uploaded ${pendingUploads.length} file(s).`, 'ok');
+            clearUploadQueue();
             await loadPhotos();
         } catch (e) {
             setStatus(el.manageStatus, e.message, 'err');
-        } finally {
-            el.uploadInput.value = '';
+            el.uploadBtn.disabled = false;
         }
     }
 
@@ -414,7 +475,11 @@
         el.connectBtn.addEventListener('click', connect);
         el.disconnectBtn.addEventListener('click', disconnect);
         el.createYearBtn.addEventListener('click', createYear);
-        el.manageYearSelect.addEventListener('change', loadPhotos);
-        el.uploadInput.addEventListener('change', (e) => uploadFiles(e.target.files));
+        el.manageYearSelect.addEventListener('change', () => {
+            clearUploadQueue();
+            loadPhotos();
+        });
+        el.uploadInput.addEventListener('change', (e) => stageUploadFiles(e.target.files));
+        el.uploadBtn.addEventListener('click', uploadFiles);
     });
 })();

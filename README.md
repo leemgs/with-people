@@ -144,6 +144,8 @@ Instead of editing files in the repo by hand, the site owner can click
    folder, a copy of `year/template.html`, and an empty `input.txt` are
    committed for you.
 3. **Manage photos** — upload, replace, delete, or rename images for a year.
+   After choosing images, edit their filenames in the upload queue before
+   clicking **Upload selected**.
    **Replace** updates the image while preserving its filename and published
    URL (the replacement must use the same extension). `input.txt` is
    regenerated automatically when the image list changes, and each action is
