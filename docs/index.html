@@ -6,7 +6,7 @@
     <title>Photo Gallery with My Loved Ones</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Gaegu:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Gaegu:wght@700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -81,33 +81,37 @@
         <nav class="topbar">
             <span class="brand">&#127795; with&#8209;people</span>
             <span class="spacer"></span>
-            <span id="themeToggle" class="pill" title="Toggle day / night">&#127769; Night</span>
-            <span id="adminMenu" class="pill" title="Manage years &amp; photos">&#128274; Admin</span>
+            <div class="language-switch" role="group" aria-label="Language">
+                <button class="language-option" type="button" data-lang="ko" aria-pressed="false">한글</button>
+                <button class="language-option" type="button" data-lang="en" aria-pressed="true">EN</button>
+            </div>
+            <button id="themeToggle" class="pill" type="button" title="Toggle day / night">&#127769; Night</button>
+            <button id="adminMenu" class="pill" type="button" title="Manage years &amp; photos">&#128274; Admin</button>
             <a class="pill" href="https://github.com/leemgs/with-people.git" target="_blank" rel="noopener">GitHub</a>
         </nav>
 
         <header class="hero">
-            <h1>Photo Gallery <span class="hero-accent">with My Loved Ones</span></h1>
-            <p class="subtitle">A curated collection of cherished memories</p>
+            <h1><span data-i18n="heroTitle">Photo Gallery</span> <span class="hero-accent" data-i18n="heroAccent">with My Loved Ones</span></h1>
+            <p class="subtitle" data-i18n="subtitle">A curated collection of cherished memories</p>
         </header>
 
         <div class="message">
             <span class="message-icon">&#127881;</span>
-            <p>Despite our rigorous selection criteria, congratulations on earning a proud spot in the album of my life's cherished memories. You've made it, and I couldn't be happier to have you as part of these unforgettable moments!</p>
+            <p data-i18n="message">Despite our rigorous selection criteria, congratulations on earning a proud spot in the album of my life's cherished memories. You've made it, and I couldn't be happier to have you as part of these unforgettable moments!</p>
         </div>
 
-        <h2 class="section-title">Browse by Year</h2>
+        <h2 class="section-title" data-i18n="browseByYear">Browse by Year</h2>
         <ul id="yearList">
             <!-- 여기에 연도 목록이 동적으로 추가됩니다. -->
         </ul>
 
         <div class="pagination">
-            <button id="prevBtn" disabled>&#9664; Previous</button>
-            <button id="nextBtn">Next &#9654;</button>
+            <button id="prevBtn" disabled><span aria-hidden="true">&#9664;</span> <span data-i18n="previous">Previous</span></button>
+            <button id="nextBtn"><span data-i18n="next">Next</span> <span aria-hidden="true">&#9654;</span></button>
         </div>
 
         <footer class="statusbar">
-            <span id="statusText">Browse the albums by year</span>
+            <span id="statusText" data-i18n="browseStatus">Browse the albums by year</span>
         </footer>
     </main>
 
@@ -197,7 +201,12 @@
         var KEY = 'wp_theme';
         function apply(t) {
             document.body.classList.toggle('night', t === 'night');
-            if (btn) btn.innerHTML = (t === 'night') ? '☀️ Day' : '🌙 Night';
+            if (btn) {
+                var language = localStorage.getItem('wp_language') === 'ko' ? 'ko' : 'en';
+                btn.textContent = (t === 'night')
+                    ? (language === 'ko' ? '☀️ 낮' : '☀️ Day')
+                    : (language === 'ko' ? '🌙 밤' : '🌙 Night');
+            }
         }
         apply(localStorage.getItem(KEY) || 'day');
         if (btn) btn.addEventListener('click', function () {
